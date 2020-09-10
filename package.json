@@ -1,0 +1,25 @@
+{
+  "name": "wav_files",
+  "version": "1.0.0",
+  "description": "Simple wav file generator in node",
+  "main": "index.js",
+  "dependencies": {
+    "arcsecond": "^3.1.1",
+    "arcsecond-binary": "^2.0.0",
+    "construct-js": "^0.7.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CristianWeiland/wav_files.git"
+  },
+  "author": "Cristian Weiland",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CristianWeiland/wav_files/issues"
+  },
+  "homepage": "https://github.com/CristianWeiland/wav_files#readme"
+}
