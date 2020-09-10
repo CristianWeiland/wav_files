@@ -65,13 +65,8 @@ const formatSubchunk = ARCSECOND.coroutine(function* () {
 const dataSubChunk = ARCSECOND.coroutine(function* () {
     const formatData = yield ARCSECOND.getData;
 
-    console.log(formatData);
+    //console.log(formatData);
 
-    //const garbage = yield ARCSECOND.str('LIST   INFOISFT   Lavf58.45.100');
-    //const garbage = ARCSECOND.everyCharUntil(ARCSECOND.str('data'));
-    //console.log(garbage);
-    //console.log('lalala');
-    //const id2 = yield ARCSECOND.str('LIST                                     ');
     const id = yield ARCSECOND.str('data');
     const size = yield ARCSECOND_BINARY.u32LE;
 
@@ -124,7 +119,7 @@ if (output.isError) {
     throw new Error(output.error);
 }
 
-console.log(output.result);
+//console.log(output.result);
 
 const sampleRate = 44100;
 
@@ -153,20 +148,28 @@ const dataSubChunkStruct = CONSTRUCT.Struct('dataSubChunk')
 const soundData = [];
 let isUp = true;
 
-//isUpFrequency = getRandomInt(0, 200);
 isUpFrequency = 100;
 
-const noSound = 1000000000;
 const AFreq = 440;
-const A3 = Math.floor(sampleRate / AFreq);
-const A2 = Math.floor(A3 * 2);
-const A4 = Math.floor(A3 / 2)
-const volume = 5000;
+const A4 = Math.floor(sampleRate / AFreq);
+
+// 0.5 ok
+// 0.25 ok
+// 0.05 ok
+// 0.01 ok
 
 function generateSound(soundData, waveFrequency, durationInSecs, volume = 5000) {
+    if (durationInSecs < 1) {
+        let allowedValues = [0.5, 0.2, 0.25, 0.05, 0.04, 0.02, 0.01];
+
+        if (!allowedValues.find(val => val === durationInSecs)) {
+            console.log(`Duration in secs smaller than 1 should be one between [${allowedValues.join(', ')}]. Found ${durationInSecs}`);
+        }
+    }
+    let freq = Math.floor(waveFrequency);
     let durationInSamples = sampleRate * durationInSecs;
     for (let i = 0; i < durationInSamples; ++i) {
-        if (i % waveFrequency === 0) {
+        if (i % freq === 0) {
             isUp = !isUp;
         }
         let sampleValue = isUp ? volume : -volume;
@@ -176,43 +179,114 @@ function generateSound(soundData, waveFrequency, durationInSecs, volume = 5000) 
 }
 
 function oneOctaveHigher(frequency) {
-    return Math.floor(frequency / 2);
+    return frequency / 2;
 }
 function oneOctaveLower(frequency) {
-    return Math.floor(frequency * 2);
+    return frequency * 2;
 }
 function oneSemitoneHigher(frequency) {
-    return Math.floor(frequency / 1.059463);
+    return frequency / 1.059463;
 }
 function oneSemitoneLower(frequency) {
-    return Math.floor(frequency * 1.059463);
+    return frequency * 1.059463;
 }
 
-generateSound(soundData, A3, 1);
-generateSound(soundData, oneSemitoneHigher(A3), 1);
-generateSound(soundData, 1, 1, 0);
-generateSound(soundData, oneSemitoneHigher(oneSemitoneHigher(oneSemitoneHigher(A3))), 1);
+function getValueFromNote(note) {
+    note = note.toUpperCase();
+    switch (note) {
+        case 'A': return 10;
+        case 'B': return 12;
+        case 'C': return 1;
+        case 'D': return 3;
+        case 'E': return 5;
+        case 'F': return 6;
+        case 'G': return 8;
+    }
+    console.log(`Invalid note to get value from! Note: ${note}`);
+    return null;
+}
+
+function distanceFromA4(note) {
+    if (typeof note !== 'string') {
+        console.log('Cant calculate note from something not a string!');
+        return;
+    }
+    if (note.length < 2 || note.length > 3) {
+        console.log('Expected note to have 2 characters. Ex: "C2", "D#4"');
+    }
+    valueA4 = 4 * 12 + getValueFromNote('A');
+
+    let noteNumber = 0;
+    const scale = note.length === 2 ? parseInt(note[1]) : parseInt(note[2]);
+    noteNumber += scale * 12;
+    noteNumber += getValueFromNote(note[0]);
+
+    if (note[1] === '#') noteNumber += 1;
+    if (note[1] === 'b') noteNumber -= 1;
+
+    return noteNumber - valueA4;
+}
+
+function moveNSemitones(n, freq) {
+    if (n === 0) {
+        return freq;
+    }
+    let pitchChanger = n > 0 ? oneSemitoneHigher : oneSemitoneLower;
+    let size = n < 0 ? -n : n;
+    for (let i = 0; i < size; ++i) {
+        freq = pitchChanger(freq);
+    }
+    return freq;
+}
+function generatePause(soundData, durationInSecs) {
+    generateSound(soundData, 1, durationInSecs, 0);
+}
+
+function getNote(note) {
+    return moveNSemitones(distanceFromA4(note), A4);
+}
+
+/*
+console.log(`Distance from B4: ${distanceFromA4('B4')}`);
+console.log(`Distance from G4: ${distanceFromA4('G4')}`);
+console.log(`Distance from B3: ${distanceFromA4('B3')}`);
+console.log(`Distance from G3: ${distanceFromA4('G3')}`);
+console.log(`Distance from C2: ${distanceFromA4('C2')}`);
+console.log(`Distance from Gb4: ${distanceFromA4('Gb4')}`);
+console.log(`Distance from G#4: ${distanceFromA4('G#4')}`);
+*/
+
+/* Music 3 */
+generateSound(soundData, getNote('C4'), 0.5);
+generateSound(soundData, getNote('E4'), 0.5);
+generateSound(soundData, getNote('G4'), 0.5);
+generateSound(soundData, getNote('E4'), 0.5);
+generateSound(soundData, getNote('C4'), 0.5);
+generatePause(soundData, 0.5);
+generateSound(soundData, getNote('C4'), 1);
+generateSound(soundData, getNote('C#4'), 1);
+generatePause(soundData, 0.5);
+generateSound(soundData, getNote('C#4'), 0.5);
+generateSound(soundData, getNote('F4'), 0.5);
+generateSound(soundData, getNote('G#4'), 0.5);
+generateSound(soundData, getNote('F4'), 0.5);
+generateSound(soundData, getNote('C#4'), 0.5);
+
+/* Music 2
+generateSound(soundData, A4, 1);
+generatePause(soundData, 1);
+generateSound(soundData, A4, 1);
+generateSound(soundData, moveNSemitones(7, A4), 1);
+generateSound(soundData, A4, 1);
+*/
+
+/* Music 1
+generateSound(soundData, oneSemitoneHigher(A4), 1);
+generatePause(soundData, 1);
+generateSound(soundData, oneSemitoneHigher(oneSemitoneHigher(oneSemitoneHigher(A4))), 1);
+*/
 //generateSound(soundData, A4, 1);
 //generateSound(soundData, A2, 1);
-
-//for (let i = 0; i < 44100 * 2; ++i) {
-//    /*if (i % 2000 === 0) {
-//        isUpFrequency = getRandomInt(0, 200);
-//    }*/
-//
-//    if (i % isUpFrequency === 0) {
-//        isUp = !isUp;
-//    }
-//    /*let sampleValue = getRandomInt(0, 5000);
-//    sampleValue = isUp ? sampleValue : -sampleValue;*/
-//    //let sampleValue = isUp ? 5000 : - 5000;
-//    let sampleValue = isUp ? 5000 : -5000;
-//    /*if (getRandomInt(0, 10) > 5) {
-//        sampleValue = sampleValue / 2;
-//    }*/
-//
-//    soundData.push(sampleValue);
-//}
 
 dataSubChunkStruct.get('data').set(soundData);
 dataSubChunkStruct.get('size').set(soundData.length * 2);
