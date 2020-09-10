@@ -246,6 +246,16 @@ function getNote(note) {
     return moveNSemitones(distanceFromA4(note), A4);
 }
 
+function generateSoundByArray(soundData, soundArray) {
+    soundArray.forEach(sound => {
+        if (sound.pause) {
+            generatePause(soundData, sound.duration);
+        } else {
+            generateSound(soundData, getNote(sound.note), sound.duration);
+        }
+    });
+}
+
 /*
 console.log(`Distance from B4: ${distanceFromA4('B4')}`);
 console.log(`Distance from G4: ${distanceFromA4('G4')}`);
@@ -256,7 +266,30 @@ console.log(`Distance from Gb4: ${distanceFromA4('Gb4')}`);
 console.log(`Distance from G#4: ${distanceFromA4('G#4')}`);
 */
 
+let soundArray = [
+    { note: 'C4', duration: 0.5 },
+    { note: 'C#4', duration: 0.5 },
+    { note: 'G4', duration: 0.5 },
+    { note: 'E4', duration: 0.5 },
+    { note: 'C4', duration: 0.5 },
+    { pause: true, duration: 0.5 },
+    { note: 'C4', duration: 1 },
+    { note: 'C#4', duration: 1 },
+    { pause: true, duration: 0.5 },
+    { note: 'C#4', duration: 0.5 },
+    { note: 'F4', duration: 0.5 },
+    { note: 'G#4', duration: 0.5 },
+    { note: 'F4', duration: 0.5 },
+    { note: 'C#4', duration: 0.5 },
+    { pause: true, duration: 0.5 },
+    { note: 'C#4', duration: 1 },
+    { note: 'D4', duration: 1 },
+]
+
+generateSoundByArray(soundData, soundArray);
+
 /* Music 3 */
+/*
 generateSound(soundData, getNote('C4'), 0.5);
 generateSound(soundData, getNote('E4'), 0.5);
 generateSound(soundData, getNote('G4'), 0.5);
@@ -271,6 +304,7 @@ generateSound(soundData, getNote('F4'), 0.5);
 generateSound(soundData, getNote('G#4'), 0.5);
 generateSound(soundData, getNote('F4'), 0.5);
 generateSound(soundData, getNote('C#4'), 0.5);
+*/
 
 /* Music 2
 generateSound(soundData, A4, 1);
