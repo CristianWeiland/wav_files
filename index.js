@@ -1,5 +1,3 @@
-const ARCSECOND = require('arcsecond');
-const ARCSECOND_BINARY = require('arcsecond-binary');
 const CONSTRUCT = require('construct-js');
 const FS = require('fs');
 const PATH = require('path');
@@ -9,117 +7,6 @@ function getRandomInt(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min)) + min;
 }
-
-//const file = FS.readFileSync(PATH.join(__dirname, './resources/Of-Reality-Eclipse.wav'));
-const file = FS.readFileSync(PATH.join(__dirname, './resources/noise.wav'));
-
-const riffChunkSize = ARCSECOND_BINARY.u32LE.chain(size => {
-    if (size !== file.length - 8) {
-        return ARCSECOND.fail(`Invalid file size: ${file.length}. Expected ${size}`);
-    }
-    return ARCSECOND.succeedWith(size);
-})
-
-const riffChunk = ARCSECOND.sequenceOf([
-    ARCSECOND.str('RIFF'),
-    riffChunkSize,
-    ARCSECOND.str('WAVE'),
-]);
-
-const formatSubchunk = ARCSECOND.coroutine(function* () {
-    const id = yield ARCSECOND.str('fmt ');
-    const subChunk1Size = yield ARCSECOND_BINARY.u32LE;
-    const audioFormat = yield ARCSECOND_BINARY.u16LE;
-    const numChannels = yield ARCSECOND_BINARY.u16LE;
-    const sampleRate = yield ARCSECOND_BINARY.u32LE;
-    const byteRate = yield ARCSECOND_BINARY.u32LE;
-    const blockAlign = yield ARCSECOND_BINARY.u16LE;
-    const bitsPerSample = yield ARCSECOND_BINARY.u16LE;
-
-    const expectedByteRate = sampleRate * numChannels * bitsPerSample / 8;
-    if (byteRate !== expectedByteRate) {
-        yield ARCSECOND.fail(`Invalid byte rate: ${byteRate}, expected ${expectedByteRate}`);
-    }
-
-    const expectedBlockAlign = numChannels * bitsPerSample / 8;
-    if (blockAlign !== expectedBlockAlign) {
-        yield ARCSECOND.fail(`Invalid byte align: ${byteAlign}, expected ${expectedByteAlign}`);
-    }
-
-    const formatChunkData = {
-        id,
-        subChunk1Size,
-        audioFormat,
-        numChannels,
-        sampleRate,
-        byteRate,
-        blockAlign,
-        bitsPerSample,
-    };
-
-    yield ARCSECOND.setData(formatChunkData);
-
-    return formatChunkData;
-});
-
-const dataSubChunk = ARCSECOND.coroutine(function* () {
-    const formatData = yield ARCSECOND.getData;
-
-    //console.log(formatData);
-
-    const id = yield ARCSECOND.str('data');
-    const size = yield ARCSECOND_BINARY.u32LE;
-
-    const samples = size / formatData.numChannels / (formatData.bitsPerSample / 8);
-    const channelData = Array.from({ length: formatData.numChannels }, () => []);
-
-    console.log(samples);
-
-    let sampleParser;
-    if (formatData.bitsPerSample === 8) {
-        sampleParser = ARCSECOND_BINARY.s8;
-    } else if (formatData.bitsPerSample === 16) {
-        sampleParser = ARCSECOND_BINARY.s16LE;
-    } else if (formatData.bitsPerSample === 32) {
-        sampleParser = ARCSECOND_BINARY.s32LE;
-    } else {
-        ARCSECOND.fail(`Unsupported bits per sample: ${formatData.bitsPerSample}`);
-    }
-    for (let sampleIndex = 0; sampleIndex < samples; ++sampleIndex) {
-        for (let channelIndex = 0; channelIndex < formatData.numChannels; ++channelIndex) {
-            const sampleValue = yield sampleParser;
-            channelData[channelIndex].push(sampleValue);
-        }
-    }
-
-    return {
-        id,
-        size,
-        channelData,
-    };
-});
-    
-
-const parser = ARCSECOND.sequenceOf([
-    riffChunk,
-    formatSubchunk,
-    //ARCSECOND.everythingUntil(ARCSECOND.str('Lavf58')),
-    //ARCSECOND.everythingUntil(ARCSECOND.str('data')),
-    dataSubChunk,
-    ARCSECOND.endOfInput,
-]).map(([ riffChunk, formatSubChunk, dataSubChunk ]) => ({
-    riffChunk,
-    formatSubChunk,
-    dataSubChunk,
-}));
-
-const output = parser.run(file.buffer);
-
-if (output.isError) {
-    throw new Error(output.error);
-}
-
-//console.log(output.result);
 
 const sampleRate = 44100;
 
@@ -146,26 +33,19 @@ const dataSubChunkStruct = CONSTRUCT.Struct('dataSubChunk')
     .field('data', CONSTRUCT.S16LEs([0]));
 
 const soundData = [];
-let isUp = true;
 
-isUpFrequency = 100;
-
-const AFreq = 440;
-const A4 = Math.floor(sampleRate / AFreq);
-
-// 0.5 ok
-// 0.25 ok
-// 0.05 ok
-// 0.01 ok
+const A4Freq = 440;
+const A4 = Math.floor(sampleRate / A4Freq);
 
 function generateSound(soundData, waveFrequency, durationInSecs, volume = 5000) {
     if (durationInSecs < 1) {
-        let allowedValues = [0.5, 0.2, 0.25, 0.05, 0.04, 0.02, 0.01];
+        let allowedValues = [0.5, 0.45, 0.3, 0.2, 0.1, 0.125, 0.15, 0.25, 0.05, 0.04, 0.02, 0.01];
 
         if (!allowedValues.find(val => val === durationInSecs)) {
             console.log(`Duration in secs smaller than 1 should be one between [${allowedValues.join(', ')}]. Found ${durationInSecs}`);
         }
     }
+    let isUp = true;
     let freq = Math.floor(waveFrequency);
     let durationInSamples = sampleRate * durationInSecs;
     for (let i = 0; i < durationInSamples; ++i) {
@@ -246,6 +126,7 @@ function getNote(note) {
     return moveNSemitones(distanceFromA4(note), A4);
 }
 
+/*
 function generateSoundByArray(soundData, soundArray) {
     soundArray.forEach(sound => {
         if (sound.pause) {
@@ -255,17 +136,6 @@ function generateSoundByArray(soundData, soundArray) {
         }
     });
 }
-
-/*
-console.log(`Distance from B4: ${distanceFromA4('B4')}`);
-console.log(`Distance from G4: ${distanceFromA4('G4')}`);
-console.log(`Distance from B3: ${distanceFromA4('B3')}`);
-console.log(`Distance from G3: ${distanceFromA4('G3')}`);
-console.log(`Distance from C2: ${distanceFromA4('C2')}`);
-console.log(`Distance from Gb4: ${distanceFromA4('Gb4')}`);
-console.log(`Distance from G#4: ${distanceFromA4('G#4')}`);
-*/
-
 let soundArray = [
     { note: 'C4', duration: 0.5 },
     { note: 'C#4', duration: 0.5 },
@@ -285,8 +155,166 @@ let soundArray = [
     { note: 'C#4', duration: 1 },
     { note: 'D4', duration: 1 },
 ]
-
 generateSoundByArray(soundData, soundArray);
+*/
+
+function getNextNote(note) {
+    // TODO: Fazer bemois e fazer uma função decente...
+    if (note[0] === 'A' && note[1] === '#') return `B${note[2]}`;
+    if (note[0] === 'A' && note[1] !== '#') return `A#${note[1]}`;
+    if (note[0] === 'G' && note[1] === '#') return `A${note[2]}`;
+    if (note[0] === 'G' && note[1] !== '#') return `G#${note[1]}`;
+    if (note[0] === 'F' && note[1] === '#') return `G${note[2]}`;
+    if (note[0] === 'F' && note[1] !== '#') return `F#${note[1]}`;
+    if (note[0] === 'E' && note[1] !== '#') return `F${note[1]}`;
+    if (note[0] === 'D' && note[1] === '#') return `E${note[2]}`;
+    if (note[0] === 'D' && note[1] !== '#') return `D#${note[1]}`;
+    if (note[0] === 'C' && note[1] === '#') return `D${note[2]}`;
+    if (note[0] === 'C' && note[1] !== '#') return `C#${note[1]}`;
+    // Increase octave
+    if (note[0] === 'B' && note[1] !== 'b') return `C${parseInt(note[1])+1}`;
+}
+
+function getPreviousNote(note) {
+    // TODO: Fazer bemois e fazer uma função decente...
+    if (note[0] === 'B' && note[1] !== 'b') return `A#${note[1]}`;
+    if (note[0] === 'A' && note[1] === '#') return `A${note[2]}`;
+    if (note[0] === 'A' && note[1] !== '#') return `G#${note[1]}`;
+    if (note[0] === 'G' && note[1] === '#') return `G${note[2]}`;
+    if (note[0] === 'G' && note[1] !== '#') return `F#${note[1]}`;
+    if (note[0] === 'F' && note[1] === '#') return `F${note[2]}`;
+    if (note[0] === 'F' && note[1] !== '#') return `E${note[1]}`;
+    if (note[0] === 'E' && note[1] !== '#') return `D#${note[1]}`;
+    if (note[0] === 'D' && note[1] === '#') return `D${note[2]}`;
+    if (note[0] === 'D' && note[1] !== '#') return `C#${note[1]}`;
+    if (note[0] === 'C' && note[1] === '#') return `C${note[2]}`;
+    // Decrease octave
+    if (note[0] === 'C' && note[1] !== '#') return `B${parseInt(note[1])-1}`;
+}
+
+firstNote = 'C4';
+for (let i = 0; i < 15; ++i) {
+    console.log(firstNote);
+    firstNote = getPreviousNote(firstNote);
+}
+
+function generateWarmup(warmupCoreGenerator, firstNote, repetitions) {
+    let initialNote = firstNote;
+    for (let i = 0; i < repetitions; ++i) {
+        warmupCoreGenerator(initialNote, i != repetitions - 1);
+        initialNote = getNextNote(initialNote);
+    }
+}
+
+//Bocca chiusa
+function warmup1Generator(firstNote, shouldModulate) {
+    let note1 = getNote(firstNote);
+    let note2Name = getNextNote(getNextNote(firstNote));
+    let note2 = getNote(note2Name);
+    let note3Name = getNextNote(getNextNote(note2Name));
+    let note3 = getNote(note3Name);
+    generateSound(soundData, note1, 0.5);
+    generateSound(soundData, note2, 0.5);
+    generateSound(soundData, note1, 0.5);
+    generateSound(soundData, note2, 0.5);
+    generateSound(soundData, note3, 0.5);
+    generateSound(soundData, note2, 0.5);
+    generateSound(soundData, note3, 0.5);
+    generateSound(soundData, note2, 0.5);
+    generateSound(soundData, note1, 0.5);
+
+    if (shouldModulate) {
+        generatePause(soundData, 0.5);
+        generateSound(soundData, note1, 1);
+        generateSound(soundData, getNote(getNextNote(firstNote)), 1);
+        generatePause(soundData, 1);
+    }
+}
+
+// Vroli vroli vroli vroli brin bréin brin bréin brin
+function warmup2Generator(firstNote, shouldModulate) {
+    let note1 = getNote(firstNote);
+    let note2Name = getNextNote(getNextNote(firstNote));
+    let note2 = getNote(note2Name);
+    let note3Name = getNextNote(getNextNote(note2Name));
+    let note3 = getNote(note3Name);
+    let note4Name = getNextNote(note3Name);
+    let note4 = getNote(note4Name);
+    let note5Name = getNextNote(getNextNote(note4Name));
+    let note5 = getNote(note5Name);
+    // vroli
+    generateSound(soundData, note1, 0.25);
+    generateSound(soundData, note2, 0.25);
+    generateSound(soundData, note3, 0.25);
+    generateSound(soundData, note4, 0.25);
+    generateSound(soundData, note5, 0.25);
+    generateSound(soundData, note4, 0.25);
+    generateSound(soundData, note3, 0.25);
+    generateSound(soundData, note2, 0.25);
+
+    // brin bréin
+    generateSound(soundData, note1, 0.5);
+    generateSound(soundData, note3, 0.5);
+    generateSound(soundData, note5, 0.5);
+    generateSound(soundData, note3, 0.5);
+    generateSound(soundData, note1, 0.25);
+
+    if (shouldModulate) {
+        generatePause(soundData, 0.25);
+        generateSound(soundData, note1, 0.5);
+        generateSound(soundData, getNote(getNextNote(firstNote)), 0.5);
+        generatePause(soundData, 0.5);
+    }
+}
+
+// o - i - a
+function warmup3Generator(firstNote, shouldModulate) {
+    let note1 = getNote(firstNote);
+    let note2Name = getNextNote(getNextNote(firstNote));
+    let note2 = getNote(note2Name);
+    let note3Name = getNextNote(getNextNote(note2Name));
+    let note3 = getNote(note3Name);
+    let note4Name = getNextNote(note3Name);
+    let note4 = getNote(note4Name);
+    let note5Name = getNextNote(getNextNote(note4Name));
+    let note5 = getNote(note5Name);
+
+    let duration = 0.15;
+    for (let i = 0; i < 3; ++i) {
+        generateSound(soundData, note1, duration);
+        generatePause(soundData, duration);
+        generateSound(soundData, note1, duration);
+        generateSound(soundData, note2, duration);
+        generateSound(soundData, note3, duration);
+        generatePause(soundData, duration);
+        generateSound(soundData, note3, duration);
+        generateSound(soundData, note4, duration);
+        generateSound(soundData, note5, duration);
+        generatePause(soundData, duration);
+        generateSound(soundData, note5, duration);
+        generateSound(soundData, note4, duration);
+        generateSound(soundData, note3, duration);
+        generateSound(soundData, note4, duration);
+        generateSound(soundData, note3, duration);
+        generateSound(soundData, note2, duration);
+    }
+    generateSound(soundData, note1, duration);
+    
+    if (shouldModulate) {
+        generatePause(soundData, duration);
+        generateSound(soundData, note1, 2 * duration);
+        generateSound(soundData, getNote(getNextNote(firstNote)), 0.45);
+        generatePause(soundData, duration);
+    }
+}
+
+// ziu ziu ziu ziu zi
+function warmup4Generator(firstNote, shouldModulate) {
+}
+
+//generateWarmup(warmup1Generator, 'C4', 2); // bocca chiusa
+generateWarmup(warmup2Generator, 'C4', 2); // vroli vroli
+//generateWarmup(warmup3Generator, 'C4', 2); // o - i - a
 
 /* Music 3 */
 /*
