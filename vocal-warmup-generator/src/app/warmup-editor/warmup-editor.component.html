@@ -1,1 +1,251 @@
-<p>warmup-editor works! {{warmupId}}</p>
+<div class="content">
+  <h1 class="warmup-editor-title">Warmup set editor</h1>
+  <div class="warmup-editor-main-grid">
+    <div class="panel">
+      <h2 class="warmup-editor-subtitle">Defined warmups</h2>
+      <div class="left-panel">
+        <!-- Drag & drop - not fully working
+        <div cdkDropList class="draggable-list" (cdkDropListDropped)="drop($event)">
+          <div class="draggable-box" *ngFor="let warmup of warmups" cdkDrag>
+            {{warmup.name}}
+          </div>
+        </div>
+
+        <div>
+          <div class="button-icon-wrapper" *ngFor="let warmup of warmups">
+            <button mat-button class="icon-button">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div>
+          <div class="button-icon-wrapper" *ngFor="let warmup of warmups">
+            <button mat-button class="icon-button">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+        -->
+
+        <mat-list role="list">
+          <mat-list-item *ngFor="let warmup of warmups; index as i" role="list-item" class="warmup-list-item-box">
+            <div class="warmup-list-grid">
+              <span>{{warmup.name}}</span>
+              <button mat-button class="icon-button">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-button class="icon-button" (click)="deleteWarmup(i)">
+                <mat-icon>delete</mat-icon>
+              </button>
+              <button [disabled]="i == 0" mat-button class="icon-button" (click)="swap(i, i+1)">
+                <mat-icon matTooltip="Can't move first element up" [matTooltipDisabled]="i != 0">arrow_upward</mat-icon>
+              </button>
+              <button [disabled]="i == warmups.length - 1" mat-button class="icon-button" (click)="swap(i, i-1)">
+                <mat-icon matTooltip="Can't move last element down" [matTooltipDisabled]="i != warmups.length - 1">arrow_downward</mat-icon>
+              </button>
+            </div>
+          </mat-list-item>
+        </mat-list>
+
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 class="warmup-editor-subtitle">New warmup</h2>
+        <mat-form-field appearance="outline">
+          <mat-label>Warmup</mat-label>
+          <mat-select [(value)]="currentWarmup.warmup">
+            <mat-option *ngFor="let predefinedWarmup of predefinedWarmups" [value]="predefinedWarmup">
+              {{predefinedWarmup.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="line-input">
+          <mat-label>Custom name</mat-label>
+          <input matInput placeholder="" [value]="currentWarmup.customName" (change)="currentWarmup.customName = $event.target.value">
+        </mat-form-field>
+
+        <!-- TODO: Define which value becomes which note, and then create ticks to help the user decide. -->
+        <!-- TODO: Consider defining begin's max as min(50, end's value). -->
+        <div>
+          <label>Starting note: {{ convertToNote(currentWarmup.range.begin) }} </label>
+          <div>
+            <mat-slider
+              min="10"
+              [max]="getBeginMin()"
+              step="1"
+              thumbLabel="true"
+              [displayWith]="convertToNote"
+              [value]="currentWarmup.range.begin"
+              (change)="currentWarmup.range.begin = $event.value"></mat-slider>
+          </div>
+        </div>
+
+        <div>
+          <label>Ending note: {{ convertToNote(currentWarmup.range.end) }} </label>
+          <div>
+            <mat-slider
+              [min]="getEndMax()"
+              max="50"
+              step="1"
+              thumbLabel="true"
+              [displayWith]="convertToNote"
+              [value]="currentWarmup.range.end"
+              (change)="currentWarmup.range.end = $event.value"></mat-slider>
+          </div>
+        </div>
+
+        <div class="small-note form-group">* Note: Starting and End note defines each other maximum and minimum value in the slider</div>
+
+        <div>
+          <button mat-raised-button color="primary" (click)="addWarmup()">Add warmup</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.content {
+  width: 80%;
+  margin-left: 10%;
+}
+
+.warmup-editor-title {
+  font-size: 36px;
+  font-weight: bold;
+  /*text-align: center;*/
+  color: #555
+}
+
+.warmup-editor-main-grid {
+  display: grid;
+  grid-template-columns: 3fr 4fr;
+  column-gap: 30px;
+}
+
+.panel {
+  border: 1px solid #bbbbbb;
+  border-radius: 3px;
+  padding: 0px 20px 20px 20px;
+  box-shadow: 1px 1px #aeaeae;
+  background-color: rgb(252, 252, 252);
+}
+
+.warmup-editor-subtitle {
+  color: #656565";
+}
+/*
+.left-panel {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  column-gap: 10px;
+}
+*/
+.warmup-list-grid {
+  display: grid;
+  grid-template-columns: 1fr repeat(4, auto);
+  align-items: center;
+  column-gap: 5px;
+  width: 100%;
+}
+
+.warmup-list-item-box {
+  margin-bottom: 5px;
+  border: 1px solid rgb(220, 220, 220);
+  border-radius: 3px;
+  background-color: rgb(248, 248, 248);
+}
+.warmup-list-item-box:hover {
+  background-color: rgb(238, 238, 238);
+}
+
+.button-icon-wrapper {
+  height: 60px;
+  padding-top: 10px;
+}
+.icon-button {
+  padding-left: 0px;
+  padding-right: 0px;
+  border: 1px solid rgb(204, 204, 204) !important;
+  border-radius: 3px;
+  min-width: 40px;
+  background-color: rgb(248, 248, 248);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+/* Drag-and-drop list */
+/*
+.draggable-list {
+  width: 500px;
+  max-width: 100%;
+  border: solid 1px #ccc;
+  min-height: 60px;
+  display: block;
+  background: white;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.draggable-box {
+  padding: 20px 10px;
+  border-bottom: solid 1px #ccc;
+  color: rgba(0, 0, 0, 0.87);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  cursor: move;
+  background: white;
+  font-size: 14px;
+}
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+              0 8px 10px 1px rgba(0, 0, 0, 0.14),
+              0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  display: inline-block;
+}
+
+.cdk-list-dragging {
+  display: inline-block;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.example-box:last-child {
+  border: none;
+}
+
+.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+*/
+/* RENAME!! */
+/*
+.example-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+}
+*/
+.line-input {
+  display: table !important;
+}
+
+.small-note {
+  font-size: 12px;
+  font-style: italic;
+}
+</style>

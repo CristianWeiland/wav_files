@@ -1,13 +1,12 @@
-<div>
+<div class="content">
   <!-- Highlight Card -->
   <h1 class="app-title">
     <span style="margin-left: 15px">{{ title }}</span>
   </h1>
 
-  <div style="display: grid; grid-template-columns: auto auto; column-gap: 30px">
-    <div style="display: grid; justify-items: center;">
-
-      <mat-card>
+  <div class="main-grid">
+    <div>
+      <mat-card class="card-darker-bg">
         <mat-card-header>
           <mat-card-title>What is Vocal warmup generator?</mat-card-title>
         </mat-card-header>
@@ -20,17 +19,19 @@
       </mat-card>
     </div>
     <div>
-      <mat-card>
+      <mat-card class="card-darker-bg">
         <mat-card-content>
-          <mat-form-field style="width: 100%">
-            <mat-label>Email</mat-label>
-            <input matInput placeholder="Ex. yourname@provider.com" (change)="email=$event.target.value" [value]="email">
-          </mat-form-field>
+          <form>
+            <mat-form-field appearance="outline" style="width: 100%">
+              <mat-label>E-mail</mat-label>
+              <input matInput placeholder="Ex. yourname@provider.com" (change)="email=$event.target.value" [value]="email">
+            </mat-form-field>
 
-          <mat-form-field style="width: 100%">
-            <mat-label>Password</mat-label>
-            <input matInput type="password" placeholder="password" (change)="password=$event.target.value" [value]="password">
-          </mat-form-field>
+            <mat-form-field appearance="outline" style="width: 100%">
+              <mat-label>Password</mat-label>
+              <input matInput type="password" placeholder="Password" (change)="password=$event.target.value" [value]="password">
+            </mat-form-field>
+          </form>
 
           <div style="margin-bottom: 15px;">
             <button mat-raised-button color="primary" (click)="handleLogin()">Login</button>
@@ -48,21 +49,37 @@
     </div>
   </div>
 
+  <!--
   <div align="center" style="margin-top: 30px">
     <img src="../assets/imgs/singing3.jfif" width="200" height="250">
   </div>
+  -->
 </div>
 
 <style>
-  .app-title {
-    font-size: 36px;
-    font-weight: bold;
-    padding: 20px;
-    text-align: center;
-    /*
-    box-shadow: 1px 1px #aeaeae;
-    border: 2px solid #888888;
-    border-radius: 3px;
-    */
-  }
-  </style>
+.app-title {
+  font-size: 36px;
+  font-weight: bold;
+  padding: 0px 20px 20px 20px;
+  text-align: center;
+}
+
+.main-grid {
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 30px;
+}
+
+.content {
+  display: flex;
+  margin: 0px auto 32px;
+  padding: 0 16px;
+  max-width: 960px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-darker-bg {
+  background-color: rgb(252, 252, 252);
+}
+</style>
