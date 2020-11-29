@@ -1,0 +1,66 @@
+<div>
+  <!-- Highlight Card -->
+  <h1 class="app-title">
+    <mat-icon>library_music</mat-icon>
+
+    <span style="margin-left: 15px">{{ title }}</span>
+  </h1>
+
+  <div style="display: grid; grid-template-columns: auto auto; column-gap: 30px">
+    <div style="display: grid; justify-items: center;">
+      <div>
+        <img src="../assets/imgs/singing3.jfif" width="200" height="250">
+      </div>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>What is Vocal warmup generator?</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>Vocal warmup generator is a free tool to help you achieve a dream shared by many: sing, and sing well.</p>
+          <p>Vocal warmup generator allows you to create personal warmups, focusing on <b>your</b> needs.
+            It allows you to define a warmup set, with whatever warmups help you practice singing,
+            with the range that helps you to grow.</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div>
+      <mat-card>
+        <mat-card-content>
+          <mat-form-field style="width: 100%">
+            <mat-label>Email</mat-label>
+            <input matInput placeholder="Ex. yourname@provider.com" (change)="email=$event.target.value" [value]="email">
+          </mat-form-field>
+
+          <mat-form-field style="width: 100%">
+            <mat-label>Password</mat-label>
+            <input matInput type="password" placeholder="password" (change)="password=$event.target.value" [value]="password">
+          </mat-form-field>
+
+          <div style="margin-bottom: 15px;">
+            <button mat-raised-button color="primary" (click)="handleLogin()">Login</button>
+            <a style="margin-left: 15px">Forgot your password?</a>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <div style="margin-top: 30px;">
+            <button mat-raised-button color="accent">Create account</button>
+          </div>
+
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<style>
+  .app-title {
+    font-size: 36px;
+    font-weight: bold;
+    border: 2px solid #888888;
+    border-radius: 3px;
+    padding: 20px;
+    box-shadow: 1px 1px #aeaeae;
+  }
+  </style>
