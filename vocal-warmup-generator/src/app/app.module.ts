@@ -12,14 +12,19 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatTableModule } from '@angular/material/table';
 import { HomeComponent } from './home/home.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
+import { WarmupListComponent } from './warmup-list/warmup-list.component';
+import { WarmupEditorComponent } from './warmup-editor/warmup-editor.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    ToolbarComponent
+    ToolbarComponent,
+    WarmupListComponent,
+    WarmupEditorComponent
   ],
   imports: [
     AppRoutingModule,
@@ -30,6 +35,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
     MatDividerModule,
     MatIconModule,
     MatInputModule,
+    MatTableModule,
     HttpClientModule,
   ],
   providers: [],

@@ -1,0 +1,43 @@
+<div style="width: 60vw">
+  <h1 class="warmup-sets-title">My warmup sets</h1>
+
+  <table mat-table [dataSource]="warmupList" style="width: 100%">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef> No. </th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-stroked-button>
+          <mat-icon [routerLink]="['../warmup-editor/', element.id]">visibility</mat-icon>
+        </button>
+        <!-- Using margin-left is not the correct way to separate, but it's quick for now.
+        TODO: Improve into a small grid display. -->
+        <button mat-stroked-button style="margin-left: 10px">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-stroked-button style="margin-left: 10px">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
+
+<style>
+.warmup-sets-title {
+  font-size: 36px;
+  font-weight: bold;
+  text-align: center;
+}
+</style>
