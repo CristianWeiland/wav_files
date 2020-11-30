@@ -89,7 +89,7 @@ export class WarmupEditorComponent implements OnInit {
     this.warmups.splice(i, 1);
   }
 
-  swapWarmups(i, j) {
+  swap(i, j) {
     // Not the most readable code, but works
     this.warmups[i] = this.warmups.splice(j, 1, this.warmups[i])[0];
   }

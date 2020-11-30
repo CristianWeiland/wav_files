@@ -37,10 +37,10 @@
               <button mat-button class="icon-button" (click)="deleteWarmup(i)">
                 <mat-icon>delete</mat-icon>
               </button>
-              <button [disabled]="i == 0" mat-button class="icon-button" (click)="swap(i, i+1)">
+              <button [disabled]="i == 0" mat-button class="icon-button" (click)="swap(i, i-1)">
                 <mat-icon matTooltip="Can't move first element up" [matTooltipDisabled]="i != 0">arrow_upward</mat-icon>
               </button>
-              <button [disabled]="i == warmups.length - 1" mat-button class="icon-button" (click)="swap(i, i-1)">
+              <button [disabled]="i == warmups.length - 1" mat-button class="icon-button" (click)="swap(i, i+1)">
                 <mat-icon matTooltip="Can't move last element down" [matTooltipDisabled]="i != warmups.length - 1">arrow_downward</mat-icon>
               </button>
             </div>

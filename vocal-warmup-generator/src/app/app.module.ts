@@ -19,10 +19,12 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+// Own components
 import { HomeComponent } from './home/home.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { WarmupListComponent } from './warmup-list/warmup-list.component';
 import { WarmupEditorComponent } from './warmup-editor/warmup-editor.component';
+import { MediaPlayerComponent } from './media-player/media-player.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,8 @@ import { WarmupEditorComponent } from './warmup-editor/warmup-editor.component';
     HomeComponent,
     ToolbarComponent,
     WarmupListComponent,
-    WarmupEditorComponent
+    WarmupEditorComponent,
+    MediaPlayerComponent
   ],
   imports: [
     AppRoutingModule,
