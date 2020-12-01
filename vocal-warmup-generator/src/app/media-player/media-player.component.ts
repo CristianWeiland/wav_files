@@ -11,11 +11,12 @@ export class MediaPlayerComponent implements OnInit {
 
   isPlaying = false;
   isMuted = false;
-  soundLevel = 100;
+  soundLevel = 25;
   soundButtonStyle: string = '';
 
   duration: number;
   currentTime: number;
+  playingBeforeMovingSlider: boolean = false;
 
   tick: any;
 
@@ -33,21 +34,40 @@ export class MediaPlayerComponent implements OnInit {
   }
 
   ngOnChanges(): void {
-    let self = this;
+    //let self = this;
     this.audio.addEventListener('loadeddata', () => {
-      self.duration = this.audio.duration;
-      self.currentTime = 0;
+      this.duration = this.audio.duration;
+      this.currentTime = 0;
+      this.audio.volume = this.soundLevel / 100;
     })
   }
 
+  volumeChange(volume) {
+    this.audio.volume = volume / 100;
+  }
+
+  /*
   soundHover() {
     console.log('SoundHover!');
     //this.soundButtonStyle = 'height: 120px; top: -100px; background-color: black';
   }
+  */
 
   sliderChange(newValue: number) {
     this.currentTime = newValue;
     this.audio.currentTime = this.currentTime;
+    this.playingBeforeMovingSlider = this.isPlaying || this.playingBeforeMovingSlider;
+    this.isPlaying = false;
+    this.audio.pause();
+  }
+
+  sliderDropped() {
+    console.log('dropped, playing before: ', this.playingBeforeMovingSlider);
+    this.isPlaying = this.playingBeforeMovingSlider;
+    if (this.isPlaying) {
+      this.audio.play();
+    }
+    this.playingBeforeMovingSlider = false;
   }
 
   togglePlay() {

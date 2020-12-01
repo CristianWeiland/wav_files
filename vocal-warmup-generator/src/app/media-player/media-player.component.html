@@ -13,26 +13,30 @@
   <!-- TODO: Test more sizes to see if this line size makes sense -->
   <div style="line-height: 48px">{{ formatTime(currentTime) }} / {{ formatTime(duration) }}</div>
 
-  <mat-slider min="0" [max]="duration || 10" step="0.001" [value]="currentTime" (change)="sliderChange($event.value)"
-    [displayWith]="formatTime" thumbLabel="true"></mat-slider>
+  <mat-slider min="0" [max]="duration || 10" step="0.001" [value]="currentTime" (input)="sliderChange($event.value)"
+    [displayWith]="formatTime" thumbLabel="true" (change)="sliderDropped()"></mat-slider>
 
-  <button mat-stroked-button (click)="toggleMute()"  (mouseenter)="soundHover()">
+  <button mat-stroked-button (click)="toggleMute()">
     <!--<div dynamicTooltip [contentTemplate]="volumeslider" class="invisible-div" [style]="soundButtonStyle"></div>-->
     <mat-icon *ngIf="!isMuted; else muted">volume_up</mat-icon>
     <ng-template #muted><mat-icon>volume_off</mat-icon></ng-template>
   </button>
 
+  <mat-slider min="1" max="100" step="1" [value]="soundLevel" thumbLabel="true" tickInterval="25" (input)="volumeChange($event.value)" class="small-slider"></mat-slider>
+
   <ng-template #volumeslider>
+    <!--
     <div style="display: flex; flex-direction: column">
       <mat-slider vertical min="1" max="100" step="1" [value]="soundLevel"></mat-slider>
     </div>
+    -->
   </ng-template>
 </div>
 
 <style>
 .media-player-grid {
   display: grid;
-  grid-template-columns: 64px 64px 64px auto 1fr 64px;
+  grid-template-columns: 64px 64px 64px auto 1fr 64px 96px;
   column-gap: 10px;
   width: 100%;
   margin-bottom: 20px;

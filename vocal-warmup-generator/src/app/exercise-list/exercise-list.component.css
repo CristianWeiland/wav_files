@@ -1,0 +1,39 @@
+.exercise-list-grid {
+  display: grid;
+  grid-template-columns: 1fr repeat(4, auto);
+  align-items: center;
+  column-gap: 5px;
+  width: 100%;
+}
+
+.exercise-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(auto, 32px));
+  align-items: center;
+  column-gap: 5px;
+  width: 100%;
+}
+
+
+.exercise-list-item-box {
+  margin-bottom: 5px;
+  border: 1px solid rgb(220, 220, 220);
+  border-radius: 3px;
+  background-color: rgb(248, 248, 248);
+}
+.exercise-list-item-box:hover {
+  background-color: rgb(238, 238, 238);
+}
+
+.button-icon-wrapper {
+  height: 60px;
+  padding-top: 10px;
+}
+.icon-button {
+  padding-left: 0px;
+  padding-right: 0px;
+  border: 1px solid rgb(204, 204, 204) !important;
+  border-radius: 3px;
+  min-width: 40px;
+  background-color: rgb(248, 248, 248);
+}

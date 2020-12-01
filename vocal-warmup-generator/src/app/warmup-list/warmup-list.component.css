@@ -1,0 +1,44 @@
+.warmup-sets-title {
+  font-size: 36px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.content {
+  width: 60%;
+  margin-left: 20%;
+}
+
+.action-buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(auto, 48px));
+  column-gap: 10px;
+}
+
+tr.detail-row {
+  height: 0;
+}
+
+tr.element-row:not(.expanded-row):hover {
+  background: whitesmoke;
+}
+
+tr.element-row:not(.expanded-row):active {
+  background: #efefef;
+}
+
+.element-row td {
+  border-bottom-width: 0;
+}
+
+.element-detail {
+  
+  width: 90%;
+  margin-left: 5%;
+  overflow: hidden;
+  /*
+  display: grid;
+  width: 80%;
+  grid-template-columns: 1fr;
+  gap: 20px;*/
+}

@@ -1,1 +1,10 @@
-<p>toolbar works!</p>
+
+<div class="toolbar" role="banner">
+  <div [routerLink]="['/']" class="clickable no-focus" style="margin-left: 10px">
+    <mat-icon>library_music</mat-icon>
+    <span style="font-size: 18px; font-weight: bold; margin-left: 10px">Home</span>
+  </div>
+  <button [routerLink]="['warmups']" mat-raised-button class="separator">Warmup list</button>
+  <button [routerLink]="['instructions']" mat-raised-button class="separator">Instructions</button>
+  <div class="spacer"></div>
+</div>

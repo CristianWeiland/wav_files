@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-warmup-editor',
@@ -15,7 +14,7 @@ export class WarmupEditorComponent implements OnInit {
 
   warmupId = -1;
 
-  predefinedWarmups = [
+  predefinedExercises = [
     { id: 0, name: 'Bocca Chiusa' },
     { id: 1, name: 'Vroli' },
     { id: 2, name: 'O-I-A' },
@@ -29,7 +28,7 @@ export class WarmupEditorComponent implements OnInit {
 
   generateDefaultValue() {
     return {
-      warmup: this.predefinedWarmups[0],
+      warmup: this.predefinedExercises[0],
       customName: '',
       range: { begin: 10, end: 20 },
       speed: 1,
@@ -60,32 +59,28 @@ export class WarmupEditorComponent implements OnInit {
     },
   ];
 
-  currentWarmup = this.generateDefaultValue();
-/*
-  drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.warmups, event.previousIndex, event.currentIndex);
+  currentExercise = this.generateDefaultValue();
+
+  getBeginMax() {
+    return Math.min(50, this.currentExercise.range.end);
   }
-*/
-  getBeginMin() {
-    return Math.min(50, this.currentWarmup.range.end);
-  }
-  getEndMax() {
-    return Math.max(10, this.currentWarmup.range.begin);
+  getEndMin() {
+    return Math.max(10, this.currentExercise.range.begin);
   }
 
-  addWarmup() {
+  addExercise() {
     let formattedWarmup = {
       id: this.warmups.length + 1,
-      warmupId: this.currentWarmup.warmup.id,
-      name: this.currentWarmup.customName || this.currentWarmup.warmup.name,
-      range: this.currentWarmup.range,
-      speed: this.currentWarmup.speed,
+      warmupId: this.currentExercise.warmup.id,
+      name: this.currentExercise.customName || this.currentExercise.warmup.name,
+      range: this.currentExercise.range,
+      speed: this.currentExercise.speed,
     };
     this.warmups.push(formattedWarmup);
-    this.currentWarmup = this.generateDefaultValue();
+    this.currentExercise = this.generateDefaultValue();
   }
 
-  deleteWarmup(i) {
+  deleteExercise(i) {
     this.warmups.splice(i, 1);
   }
 

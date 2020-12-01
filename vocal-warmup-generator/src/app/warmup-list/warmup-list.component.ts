@@ -27,9 +27,9 @@ export class WarmupListComponent implements OnInit {
 
   warmupList = [
     { id: 1, name: 'Basic warmup' },
-    { id: 2, name: 'Advanced warmup' },
-    { id: 3, name: 'Advanced warmup - C#3' },
-    { id: 4, name: 'Advanced warmup - D#3' },
+    { id: 2, name: 'Quick warmup' },
+    { id: 3, name: 'Advanced warmup' },
+    { id: 4, name: 'Range extension warmup' },
   ];
 
   selectElement(element) {

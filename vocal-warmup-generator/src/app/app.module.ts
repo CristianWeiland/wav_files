@@ -20,16 +20,17 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 // Own components
-import { HomeComponent } from './home/home.component';
-import { ToolbarComponent } from './toolbar/toolbar.component';
-import { WarmupListComponent } from './warmup-list/warmup-list.component';
-import { WarmupEditorComponent } from './warmup-editor/warmup-editor.component';
-import { MediaPlayerComponent } from './media-player/media-player.component';
 import { DynamicTooltipComponent } from './dynamic-tooltip/dynamic-tooltip.component';
+import { ExerciseListComponent } from './exercise-list/exercise-list.component';
+import { InstructionsComponent } from './instructions/instructions.component';
+import { HomeComponent } from './home/home.component';
+import { MediaPlayerComponent } from './media-player/media-player.component';
+import { ToolbarComponent } from './toolbar/toolbar.component';
+import { WarmupEditorComponent } from './warmup-editor/warmup-editor.component';
+import { WarmupListComponent } from './warmup-list/warmup-list.component';
 
 // Directives
 import { ToolTipRendererDirective } from './app-directives/dynamic-tooltip-renderer.directive';
-import { WarmupsListComponent } from './warmups-list/warmups-list.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { WarmupsListComponent } from './warmups-list/warmups-list.component';
     MediaPlayerComponent,
     DynamicTooltipComponent,
     ToolTipRendererDirective,
-    WarmupsListComponent,
+    ExerciseListComponent,
+    InstructionsComponent,
   ],
   imports: [
     AppRoutingModule,
