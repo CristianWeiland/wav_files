@@ -21,6 +21,9 @@ export class WarmupListComponent implements OnInit {
 
   displayedColumns: string[] = ['id', 'name', 'actions'];
   expandedElement: null;
+  audio: HTMLAudioElement;
+
+  deleteThisVarLater = true;
 
   warmupList = [
     { id: 1, name: 'Basic warmup' },
@@ -28,4 +31,16 @@ export class WarmupListComponent implements OnInit {
     { id: 3, name: 'Advanced warmup - C#3' },
     { id: 4, name: 'Advanced warmup - D#3' },
   ];
+
+  selectElement(element) {
+    this.expandedElement = this.expandedElement === element ? null : element;
+
+    if (this.expandedElement) {
+      if (this.deleteThisVarLater)
+        this.audio = new Audio('../../../assets/audio/new.wav');
+      else
+        this.audio = new Audio('../../../assets/audio/new1.wav');
+      this.deleteThisVarLater = !this.deleteThisVarLater;
+    }
+  }
 }

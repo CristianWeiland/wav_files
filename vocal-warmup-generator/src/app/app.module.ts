@@ -25,6 +25,11 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { WarmupListComponent } from './warmup-list/warmup-list.component';
 import { WarmupEditorComponent } from './warmup-editor/warmup-editor.component';
 import { MediaPlayerComponent } from './media-player/media-player.component';
+import { DynamicTooltipComponent } from './dynamic-tooltip/dynamic-tooltip.component';
+
+// Directives
+import { ToolTipRendererDirective } from './app-directives/dynamic-tooltip-renderer.directive';
+import { WarmupsListComponent } from './warmups-list/warmups-list.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +38,10 @@ import { MediaPlayerComponent } from './media-player/media-player.component';
     ToolbarComponent,
     WarmupListComponent,
     WarmupEditorComponent,
-    MediaPlayerComponent
+    MediaPlayerComponent,
+    DynamicTooltipComponent,
+    ToolTipRendererDirective,
+    WarmupsListComponent,
   ],
   imports: [
     AppRoutingModule,

@@ -1,0 +1,51 @@
+<div class="media-player-grid">
+  <button mat-stroked-button matTooltip="Go back to previous">
+    <mat-icon>skip_previous</mat-icon>
+  </button>
+  <button mat-stroked-button (click)="togglePlay()">
+    <mat-icon *ngIf="!isPlaying; else pause">play_arrow</mat-icon>
+    <ng-template #pause><mat-icon>pause</mat-icon></ng-template>
+  </button>
+  <button mat-stroked-button matTooltip="Skip current warmup" (click)="getDuration()">
+    <mat-icon>skip_next</mat-icon>
+  </button>
+
+  <!-- TODO: Test more sizes to see if this line size makes sense -->
+  <div style="line-height: 48px">{{ formatTime(currentTime) }} / {{ formatTime(duration) }}</div>
+
+  <mat-slider min="0" [max]="duration || 10" step="0.001" [value]="currentTime" (change)="sliderChange($event.value)"
+    [displayWith]="formatTime" thumbLabel="true"></mat-slider>
+
+  <button mat-stroked-button (click)="toggleMute()"  (mouseenter)="soundHover()">
+    <!--<div dynamicTooltip [contentTemplate]="volumeslider" class="invisible-div" [style]="soundButtonStyle"></div>-->
+    <mat-icon *ngIf="!isMuted; else muted">volume_up</mat-icon>
+    <ng-template #muted><mat-icon>volume_off</mat-icon></ng-template>
+  </button>
+
+  <ng-template #volumeslider>
+    <div style="display: flex; flex-direction: column">
+      <mat-slider vertical min="1" max="100" step="1" [value]="soundLevel"></mat-slider>
+    </div>
+  </ng-template>
+</div>
+
+<style>
+.media-player-grid {
+  display: grid;
+  grid-template-columns: 64px 64px 64px auto 1fr 64px;
+  column-gap: 10px;
+  width: 100%;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.invisible-div {
+  position: absolute;
+  background-color: red;
+  height: 30px;
+  width: 100%;
+  left: 0;
+  top: -20px;
+  /*z-index: 30;*/
+}
+</style>

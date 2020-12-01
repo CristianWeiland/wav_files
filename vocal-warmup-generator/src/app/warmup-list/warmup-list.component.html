@@ -16,7 +16,7 @@
       <th mat-header-cell *matHeaderCellDef> Actions </th>
       <td mat-cell *matCellDef="let element" style="width: 286px">
         <div class="action-buttons-grid">
-          <button mat-stroked-button (click)="expandedElement = expandedElement === element ? null : element">
+          <button mat-stroked-button (click)="selectElement(element)">
             <mat-icon>visibility</mat-icon>
           </button>
           <button mat-stroked-button [routerLink]="['../warmup-editor/', element.id]">
@@ -37,7 +37,7 @@
       <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
         <div class="example-element-detail"
             [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-          <app-media-player style="width: 100%"></app-media-player>
+          <app-media-player *ngIf="audio" [audio]="audio" style="width: 100%"></app-media-player>
         </div>
       </td>
     </ng-container>
