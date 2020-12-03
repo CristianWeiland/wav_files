@@ -1,5 +1,5 @@
 <div class="media-player-grid">
-  <button mat-stroked-button matTooltip="Go back to previous">
+  <button [disabled]="!audio" mat-stroked-button matTooltip="Go back to previous">
     <mat-icon>skip_previous</mat-icon>
   </button>
   <button mat-stroked-button (click)="togglePlay()">

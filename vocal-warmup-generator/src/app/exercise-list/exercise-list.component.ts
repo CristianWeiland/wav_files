@@ -12,9 +12,10 @@ export interface Exercise {
     begin: number,
     end: number
   };
-  speed: number,
+  //speed: number,
 }
 
+/*
 let ELEMENT_DATA: Exercise[] = [
   {
     exerciseId: 0,
@@ -47,6 +48,9 @@ let ELEMENT_DATA: Exercise[] = [
     speed: 1,
   },
 ];
+*/
+
+let ELEMENT_DATA: Exercise[] = [];
 
 @Component({
   selector: 'app-exercise-list',
@@ -58,6 +62,7 @@ let ELEMENT_DATA: Exercise[] = [
 export class ExerciseListComponent implements OnInit {
 
   @Input() mode: string;
+  @Input() exercises: Exercise[];
 
   @Output() requestEdit = new EventEmitter<any>();
 
@@ -74,6 +79,16 @@ export class ExerciseListComponent implements OnInit {
     } else { // mode === 'view'
       this.displayedColumns = ['id', 'name'];
     }
+
+    ELEMENT_DATA.splice(0, ELEMENT_DATA.length);
+
+    this.exercises.forEach(exercise => {
+      ELEMENT_DATA.push(exercise);
+    });
+  }
+
+  ngAfterViewInit() {
+    this.table.renderRows();
   }
 
   deleteExercise(i: number) {

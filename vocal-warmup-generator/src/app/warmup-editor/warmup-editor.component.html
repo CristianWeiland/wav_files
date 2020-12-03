@@ -13,7 +13,7 @@
       <h2 class="warmup-editor-subtitle">New exercise</h2>
       <mat-form-field appearance="outline">
         <mat-label>Exercise</mat-label>
-        <mat-select [(value)]="currentExercise.warmup">
+        <mat-select [(value)]="currentExercise.exercise">
           <mat-option *ngFor="let predefinedExercise of predefinedExercises" [value]="predefinedExercise">
             {{predefinedExercise.name}}
           </mat-option>
