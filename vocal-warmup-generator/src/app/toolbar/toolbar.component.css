@@ -15,7 +15,8 @@
   height: 60px;
   display: flex;
   align-items: center;
-  background-color: #1976d2;
+  /*background-color: #1976d2;*/
+  background-color: #673ab7;
   color: white;
   font-weight: 600;
 }

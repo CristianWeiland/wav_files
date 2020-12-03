@@ -36,9 +36,4 @@ tr.element-row:not(.expanded-row):active {
   width: 90%;
   margin-left: 5%;
   overflow: hidden;
-  /*
-  display: grid;
-  width: 80%;
-  grid-template-columns: 1fr;
-  gap: 20px;*/
 }

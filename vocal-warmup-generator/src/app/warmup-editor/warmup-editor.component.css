@@ -1,0 +1,59 @@
+.content {
+  width: 80%;
+  margin-left: 10%;
+}
+
+.warmup-editor-title {
+  font-size: 36px;
+  font-weight: bold;
+  /*text-align: center;*/
+  color: #555
+}
+
+.warmup-editor-main-grid {
+  display: grid;
+  grid-template-columns: 3fr 4fr;
+  column-gap: 30px;
+}
+
+.panel {
+  border: 1px solid #bbbbbb;
+  border-radius: 3px;
+  padding: 0px 20px 20px 20px;
+  box-shadow: 1px 1px #aeaeae;
+  background-color: rgb(252, 252, 252);
+}
+
+.warmup-editor-subtitle {
+  color: "#656565";
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.line-input {
+  display: table !important;
+}
+
+.small-note {
+  font-size: 12px;
+  font-style: italic;
+}
+
+::ng-deep .mat-accent .mat-slider-thumb {
+  background-color: black;
+}
+
+::ng-deep .mat-accent .mat-slider-thumb-label {
+  background-color: black;
+}
+
+::ng-deep .mat-accent .mat-slider-thumb-label span {
+  color: white;
+  font-size: 10px;
+}
+
+::ng-deep .mat-accent .mat-slider-track-fill {
+  background-color: black;
+} 

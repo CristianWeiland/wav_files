@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { ExerciseListComponent } from '../exercise-list/exercise-list.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-warmup-editor',
@@ -10,14 +12,20 @@ export class WarmupEditorComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private _snackBar: MatSnackBar,
   ) {}
+
+  @ViewChild(ExerciseListComponent) exerciseList: ExerciseListComponent;
 
   warmupId = -1;
 
+  // TODO: Fetch predefinedExercises from db
   predefinedExercises = [
     { id: 0, name: 'Bocca Chiusa' },
     { id: 1, name: 'Vroli' },
     { id: 2, name: 'O-I-A' },
+    { id: 3, name: 'Ziu ziu' },
+    { id: 4, name: 'Mei mai mei' },
   ];
 
   ngOnInit(): void {
@@ -28,36 +36,12 @@ export class WarmupEditorComponent implements OnInit {
 
   generateDefaultValue() {
     return {
-      warmup: this.predefinedExercises[0],
+      exercise: this.predefinedExercises[0],
       customName: '',
       range: { begin: 10, end: 20 },
       speed: 1,
     };
   }
-
-  warmups = [
-    {
-      id: 0,
-      warmupId: 0,
-      name: 'Episode I - The Phantom Menace',
-      range: { begin: 10, end: 20 },
-      speed: 1,
-    },
-    {
-      id: 1,
-      warmupId: 1,
-      name: 'Episode II - Attack of the Clones',
-      range: { begin: 10, end: 20 },
-      speed: 1,
-    },
-    {
-      id: 2,
-      warmupId: 2,
-      name: 'Episode III - Revenge of the Sith',
-      range: { begin: 10, end: 20 },
-      speed: 1,
-    },
-  ];
 
   currentExercise = this.generateDefaultValue();
 
@@ -69,24 +53,29 @@ export class WarmupEditorComponent implements OnInit {
   }
 
   addExercise() {
-    let formattedWarmup = {
-      id: this.warmups.length + 1,
-      warmupId: this.currentExercise.warmup.id,
-      name: this.currentExercise.customName || this.currentExercise.warmup.name,
+    let formattedExercise = {
+      exerciseId: this.currentExercise.exercise.id,
+      name: this.currentExercise.customName || this.currentExercise.exercise.name,
       range: this.currentExercise.range,
       speed: this.currentExercise.speed,
     };
-    this.warmups.push(formattedWarmup);
+
+    this.exerciseList.addExercise(formattedExercise);
+
     this.currentExercise = this.generateDefaultValue();
   }
 
-  deleteExercise(i) {
-    this.warmups.splice(i, 1);
+  save() {
+    let warmup = this.exerciseList.getFullWarmup();
+
+    // TODO: Save on db
+    this._snackBar.open('Warmup saved successfully!', 'Ok!', {
+      duration: 5000,
+    });
   }
 
-  swap(i, j) {
-    // Not the most readable code, but works
-    this.warmups[i] = this.warmups.splice(j, 1, this.warmups[i])[0];
+  changeSelectedExercise() {
+    console.log('Changing!');
   }
 
   convertToNote(note) {

@@ -15,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -59,6 +60,7 @@ import { ToolTipRendererDirective } from './app-directives/dynamic-tooltip-rende
     MatInputModule,
     MatListModule,
     MatSelectModule,
+    MatSnackBarModule,
     MatSliderModule,
     MatTableModule,
     MatTooltipModule,

@@ -4,116 +4,67 @@
     <div class="mat-elevation-z8" style="padding: 20px">
       <h2 class="warmup-editor-subtitle">Defined exercises</h2>
       <div class="left-panel">
-        <app-exercise-list mode="edit"></app-exercise-list>
+        <app-exercise-list mode="edit" (requestEdit)="changeSelectedExercise()"></app-exercise-list>
       </div>
     </div>
 
     <!--<div class="panel">-->
     <div class="mat-elevation-z8" style="padding: 20px">
       <h2 class="warmup-editor-subtitle">New exercise</h2>
-        <mat-form-field appearance="outline">
-          <mat-label>Exercise</mat-label>
-          <mat-select [(value)]="currentExercise.warmup">
-            <mat-option *ngFor="let predefinedExercise of predefinedExercises" [value]="predefinedExercise">
-              {{predefinedExercise.name}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Exercise</mat-label>
+        <mat-select [(value)]="currentExercise.warmup">
+          <mat-option *ngFor="let predefinedExercise of predefinedExercises" [value]="predefinedExercise">
+            {{predefinedExercise.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <mat-form-field appearance="outline" class="line-input">
-          <mat-label>Custom name</mat-label>
-          <input matInput placeholder="" [value]="currentExercise.customName" (change)="currentExercise.customName = $event.target.value">
-        </mat-form-field>
+      <mat-form-field appearance="outline" class="line-input">
+        <mat-label>Custom name</mat-label>
+        <input matInput placeholder="" [value]="currentExercise.customName" (change)="currentExercise.customName = $event.target.value">
+      </mat-form-field>
 
+      <div>
+        <label>Starting note: {{ convertToNote(currentExercise.range.begin) }} </label>
         <div>
-          <label>Starting note: {{ convertToNote(currentExercise.range.begin) }} </label>
-          <div>
-            {{convertToNote(10)}}
-            <mat-slider
-              min="10"
-              [max]="getBeginMax()"
-              step="1"
-              thumbLabel="true"
-              [displayWith]="convertToNote"
-              [value]="currentExercise.range.begin"
-              (change)="currentExercise.range.begin = $event.value"></mat-slider>
-            {{convertToNote(getBeginMax())}}
-          </div>
+          <b>{{convertToNote(10)}}</b>
+          <mat-slider
+            min="10"
+            [max]="getBeginMax()"
+            step="1"
+            thumbLabel="true"
+            [displayWith]="convertToNote"
+            [value]="currentExercise.range.begin"
+            (change)="currentExercise.range.begin = $event.value"></mat-slider>
+          <b>{{convertToNote(getBeginMax())}}</b>
         </div>
+      </div>
 
+      <div>
+        <label>Ending note: {{ convertToNote(currentExercise.range.end) }} </label>
         <div>
-          <label>Ending note: {{ convertToNote(currentExercise.range.end) }} </label>
-          <div>
-            {{convertToNote(getEndMin())}}
-            <mat-slider
-              [min]="getEndMin()"
-              max="50"
-              step="1"
-              thumbLabel="true"
-              [displayWith]="convertToNote"
-              [value]="currentExercise.range.end"
-              (change)="currentExercise.range.end = $event.value"></mat-slider>
-            {{convertToNote(50)}}
-          </div>
+          <b>{{convertToNote(getEndMin())}}</b>
+          <mat-slider
+            [min]="getEndMin()"
+            max="40"
+            step="1"
+            thumbLabel="true"
+            [displayWith]="convertToNote"
+            [value]="currentExercise.range.end"
+            (change)="currentExercise.range.end = $event.value"></mat-slider>
+          <b>{{convertToNote(40)}}</b>
         </div>
+      </div>
 
-        <div class="small-note form-group">* Note: Starting and End note defines each other maximum and minimum value in the slider</div>
+      <div class="small-note form-group">* Note: Starting and End note defines each other maximum and minimum value in the slider</div>
 
-        <div>
-          <button mat-raised-button color="primary" (click)="addExercise()">Add exercise</button>
-        </div>
+      <div>
+        <button mat-raised-button color="primary" (click)="addExercise()">Add exercise</button>
+      </div>
     </div>
   </div>
+  <div style="padding-top: 20px">
+    <button style="float: right" mat-raised-button color="accent" (click)="save()">Save warmup</button>
+  </div>
 </div>
-
-<style>
-.content {
-  width: 80%;
-  margin-left: 10%;
-}
-
-.warmup-editor-title {
-  font-size: 36px;
-  font-weight: bold;
-  /*text-align: center;*/
-  color: #555
-}
-
-.warmup-editor-main-grid {
-  display: grid;
-  grid-template-columns: 3fr 4fr;
-  column-gap: 30px;
-}
-
-.panel {
-  border: 1px solid #bbbbbb;
-  border-radius: 3px;
-  padding: 0px 20px 20px 20px;
-  box-shadow: 1px 1px #aeaeae;
-  background-color: rgb(252, 252, 252);
-}
-
-.warmup-editor-subtitle {
-  color: #656565";
-}
-/*
-.left-panel {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  column-gap: 10px;
-}
-*/
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.line-input {
-  display: table !important;
-}
-
-.small-note {
-  font-size: 12px;
-  font-style: italic;
-}
-</style>
