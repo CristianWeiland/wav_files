@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+
+import { removeFilenameCollisionAvoider } from '../../utils/utils';
 
 @Component({
   selector: 'app-warmup-list',
@@ -17,6 +17,7 @@ import { catchError, retry } from 'rxjs/operators';
     ]),
   ],
 })
+
 export class WarmupListComponent implements OnInit {
 
   constructor(
@@ -46,6 +47,29 @@ export class WarmupListComponent implements OnInit {
       });
   }
 
+  blob: any; // TODO: check if I need this here or it can be a local "let" inside downloadRequest
+  downloadRequest(filename) {
+    // download file
+    const httpOptions = {
+      responseType: 'blob' as 'json',
+      //headers: new HttpHeaders({
+      //  'Authorization': this.authKey,
+      //}),
+    };
+
+    this.http.get(`http://127.0.0.1:8080/audio/${filename}`, httpOptions)
+      .subscribe((data: any) => {
+        //this.blob = new Blob([data], { type: 'audio/x-wav' });
+
+        let downloadURL = window.URL.createObjectURL(data);
+        let link = document.createElement('a');
+        link.href = downloadURL;
+        link.download = removeFilenameCollisionAvoider(filename);
+        link.click();
+        window.URL.revokeObjectURL(data);
+      });
+  }
+
   generateWarmup(warmup, updateAudio) {
     let params = {
       exercises: warmup.exercises,
@@ -62,17 +86,7 @@ export class WarmupListComponent implements OnInit {
           this.audio = new Audio();
           this.audio.src = `http://127.0.0.1:8080/audio/${response.filename}`;
         } else {
-          // TODO: Make this work :)
-          // download file
-          //const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.style.display = 'none';
-          //a.href = url;
-          // the filename you want
-          a.download = 'todo-1.json';
-          document.body.appendChild(a);
-          a.click();
-          //window.URL.revokeObjectURL(url);
+          this.downloadRequest(response.filename);
         }
       }, err => {
         console.log(err);
@@ -85,13 +99,11 @@ export class WarmupListComponent implements OnInit {
   }
 
   downloadWav(warmup) {
-    if (!warmup.filename) {
-      this._snackBar.open('Generating warmup...', 'Ok!', {
-        duration: 5000,
-      });
+    this._snackBar.open('Generating warmup...', 'Ok!', {
+      duration: 5000,
+    });
 
-      this.generateWarmup(warmup, false);
-    }
+    this.generateWarmup(warmup, false);
   }
 
   selectElement(warmup) {
