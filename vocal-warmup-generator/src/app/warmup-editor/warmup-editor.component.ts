@@ -1,7 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ExerciseListComponent } from '../exercise-list/exercise-list.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-warmup-editor',
@@ -13,11 +14,15 @@ export class WarmupEditorComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private _snackBar: MatSnackBar,
+    private http: HttpClient,
   ) {}
 
   @ViewChild(ExerciseListComponent) exerciseList: ExerciseListComponent;
 
-  warmupId = -1;
+  warmupId: number = -1;
+  isEdit: boolean = true;
+  loading: boolean = true;
+  err: string = null;
 
   // TODO: Fetch predefinedExercises from db
   predefinedExercises = [
@@ -28,9 +33,39 @@ export class WarmupEditorComponent implements OnInit {
     { id: 4, name: 'Mei mai mei' },
   ];
 
+  // TODO: Load first exercise from warmup instead of a new with default values WHEN EDITTING
+  currentExercise = this.generateDefaultValue();
+  warmup = null;
+
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      this.warmupId = parseInt(params.get('warmupId'));
+      let idParam = params.get('warmupId');
+
+      this.warmupId = idParam === null ? null : parseInt(idParam);
+
+      this.isEdit = idParam !== null;
+
+      if (this.isEdit) {
+        this.loading = true;
+        let params = { params: new HttpParams().set('id', this.warmupId.toString()) };
+
+        this.http.get('http://127.0.0.1:8080/warmup/warmup', params)
+          .subscribe((response: any) => {
+            this.warmup = response.warmup;
+            this.loading = false;
+          }, (err) => {
+            this.loading = false;
+            console.log('Error fetching warmup!', err);
+            if (err.status === 404) {
+              console.log('Error: this warmup does not exist!');
+              this.err = 'Error 404: Warmup not found.';
+            } else {
+              console.log('Unable to fetch warmup. Try again later.');
+            }
+          });
+      } else {
+        this.warmup = { id: -1, name: '', exercises: [] };
+      }
     });
   }
 
@@ -42,8 +77,6 @@ export class WarmupEditorComponent implements OnInit {
       speed: 1,
     };
   }
-
-  currentExercise = this.generateDefaultValue();
 
   getBeginMax() {
     return Math.min(50, this.currentExercise.range.end);

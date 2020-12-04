@@ -24,54 +24,27 @@ export class WarmupListComponent implements OnInit {
     private http: HttpClient,
   ) {}
 
-  ngOnInit(): void {}
-
+  warmupList: Array<any> = [];
+  fetchingWarmups: boolean = false;
+  fetchingWarmupsError = null;
   displayedColumns: string[] = ['id', 'name', 'actions'];
   expandedElement: null;
   audio: HTMLAudioElement;
+  generating: boolean = false;
 
-  deleteThisVarLater = true;
+  ngOnInit(): void {
+    this.fetchingWarmups = true;
+    this.fetchingWarmupsError = null;
 
-  warmupList = [
-    {
-      id: 1,
-      name: 'Basic warmup (all)',
-      filename: null,
-      exercises: [
-        { exerciseId: 0, name: 'Bocca Chiusa', range: { begin: 10, end: 12 }},
-        { exerciseId: 1, name: 'Vroli vroli', range: { begin: 10, end: 12 }},
-        { exerciseId: 2, name: 'O - I - A', range: { begin: 10, end: 12 }},
-      ],
-    },
-    {
-      id: 2,
-      name: 'Quick warmup (BC)',
-      filename: null,
-      exercises: [
-        { exerciseId: 0, name: 'Bocca Chiusa', range: { begin: 10, end: 12 }},
-      ],
-    },
-    {
-      id: 3,
-      name: 'Advanced warmup (vroli)',
-      filename: null,
-      exercises: [
-        { exerciseId: 1, name: 'Vroli vroli', range: { begin: 10, end: 12 }},
-        { exerciseId: 1, name: 'Vroli vroli', range: { begin: 10, end: 12 }},
-      ],
-    },
-    {
-      id: 4,
-      name: 'Range extension warmup (oia)',
-      filename: null,
-      exercises: [
-        { exerciseId: 2, name: 'O - I - A', range: { begin: 10, end: 12 }},
-        { exerciseId: 2, name: 'O - I - A', range: { begin: 10, end: 12 }},
-        { exerciseId: 2, name: 'O - I - A', range: { begin: 10, end: 12 }},
-        { exerciseId: 2, name: 'O - I - A', range: { begin: 10, end: 20 }},
-      ],
-    },
-  ];
+    this.http.get('http://127.0.0.1:8080/warmup/')
+      .subscribe((response: any) => {
+        this.fetchingWarmups = false;
+        this.warmupList = response.warmups;
+      }, (err) => {
+        console.log('Error fetching warmups!', err);
+        this.fetchingWarmupsError = 'Unable to fetch warmups!';
+      });
+  }
 
   generateWarmup(warmup, updateAudio) {
     let params = {
@@ -79,15 +52,17 @@ export class WarmupListComponent implements OnInit {
       name: warmup.name,
     }
     this.audio = null;
-    // TODO: Add a "loader" while generating
+    this.generating = true;
+
     this.http.post('http://127.0.0.1:8080/wav/generate', params)
       .subscribe((response: any) => {
         warmup.filename = response.filename;
+        this.generating = false;
         if (updateAudio) {
-          //this.audio = new Audio(`../../../assets/audio/${response.filename}`);
           this.audio = new Audio();
           this.audio.src = `http://127.0.0.1:8080/audio/${response.filename}`;
         } else {
+          // TODO: Make this work :)
           // download file
           //const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
@@ -125,16 +100,10 @@ export class WarmupListComponent implements OnInit {
     if (this.expandedElement) {
       if (!warmup.filename) {
         this.generateWarmup(warmup, true);
+      } else {
+        this.audio = new Audio();
+        this.audio.src = `http://127.0.0.1:8080/audio/${warmup.filename}`;
       }
-      //this.audio = new Audio(`../../../assets/audio/${warmup.filename}`);
-      /*
-      if (this.deleteThisVarLater)
-        this.audio = new Audio('../../../assets/audio/new.wav');
-      else
-        //this.audio = new Audio('../../../assets/audio/new1.wav');
-        this.audio = new Audio('../../../../assets/audio/Quick warmup.wav');
-      this.deleteThisVarLater = !this.deleteThisVarLater;
-      */
     }
   }
 }

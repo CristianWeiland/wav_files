@@ -3,7 +3,7 @@ let router = express.Router();
 
 let wavGenerator = require('../utils/wav-generator');
 
-/* GET wavs listing. */
+/* Generate a warmup. */
 router.post('/generate', function(req, res, next) {
   try {
     let warmup = req.body;
