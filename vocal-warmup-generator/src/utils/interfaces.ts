@@ -11,7 +11,7 @@ interface ExerciseInterface {
 interface WarmupInterface {
   id: number;
   name: string;
-  exercises: Exercise[];
+  exercises: ExerciseInterface[];
 }
 
 export {
