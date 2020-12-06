@@ -1,0 +1,6 @@
+{
+    "host": "localhost",
+    "user": "mysql-user",
+    "database": "warmup-database",
+    "password": "password"
+}

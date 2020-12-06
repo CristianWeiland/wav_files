@@ -5,6 +5,8 @@ import {
   MatColumnDef, MatHeaderRowDef, MatNoDataRow, MatRowDef, MatTable, MatTableDataSource
 } from '@angular/material/table';
 
+import { convertToNote } from '../../utils/utils';
+
 export interface Exercise {
   exerciseId: number;
   name: string;
@@ -15,41 +17,6 @@ export interface Exercise {
   //speed: number,
 }
 
-/*
-let ELEMENT_DATA: Exercise[] = [
-  {
-    exerciseId: 0,
-    name: 'Bocca Chiusa',
-    range: { begin: 10, end: 20 },
-    speed: 1,
-  },
-  {
-    exerciseId: 1,
-    name: 'Vroli - brin',
-    range: { begin: 10, end: 20 },
-    speed: 1,
-  },
-  {
-    exerciseId: 2,
-    name: 'O - I - A',
-    range: { begin: 10, end: 20 },
-    speed: 1,
-  },
-  {
-    exerciseId: 2,
-    name: 'Ziu ziu',
-    range: { begin: 10, end: 20 },
-    speed: 1,
-  },
-  {
-    exerciseId: 2,
-    name: 'Mei mai mei',
-    range: { begin: 10, end: 20 },
-    speed: 1,
-  },
-];
-*/
-
 let ELEMENT_DATA: Exercise[] = [];
 
 @Component({
@@ -58,26 +25,26 @@ let ELEMENT_DATA: Exercise[] = [];
   styleUrls: ['./exercise-list.component.css']
 })
 
-
 export class ExerciseListComponent implements OnInit {
 
   @Input() mode: string;
   @Input() exercises: Exercise[];
 
-  @Output() requestEdit = new EventEmitter<any>();
+  @Output() requestEdit = new EventEmitter<number>();
+  @Output() requestDelete = new EventEmitter<number>();
 
   constructor() { }
 
-  displayedColumns: string[] = ['id', 'name', 'actions'];
+  displayedColumns: string[] = ['id', 'name', 'range', 'actions'];
   dataSource = new MatTableDataSource<Exercise>(ELEMENT_DATA);
 
   @ViewChild(MatTable) table: MatTable<any>;
 
   ngOnInit(): void {
     if (this.mode === 'edit') {
-      this.displayedColumns = ['id', 'name', 'actions'];
+      this.displayedColumns = ['id', 'name', 'range', 'actions'];
     } else { // mode === 'view'
-      this.displayedColumns = ['id', 'name'];
+      this.displayedColumns = ['id', 'name', 'range'];
     }
 
     ELEMENT_DATA.splice(0, ELEMENT_DATA.length);
@@ -91,13 +58,23 @@ export class ExerciseListComponent implements OnInit {
     this.table.renderRows();
   }
 
+  selectExercise(index: number) {
+    this.requestEdit.emit(index);
+  }
+
   deleteExercise(i: number) {
     this.dataSource.data.splice(i, 1);
+    this.requestDelete.emit(i);
     this.table.renderRows();
   }
 
   addExercise(newExercise: Exercise) {
     this.dataSource.data.push(newExercise);
+    this.table.renderRows();
+  }
+
+  updateExercise(newExercise: Exercise, id: number) {
+    this.dataSource.data[id] = newExercise;
     this.table.renderRows();
   }
 
@@ -115,5 +92,9 @@ export class ExerciseListComponent implements OnInit {
   swap(i: number, j: number) {
     this.dataSource.data[i] = this.dataSource.data.splice(j, 1, this.dataSource.data[i])[0];
     this.table.renderRows();
+  }
+
+  convertToNote(note) {
+    return convertToNote(note);
   }
 }

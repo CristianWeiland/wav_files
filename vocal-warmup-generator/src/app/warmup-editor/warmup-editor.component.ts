@@ -4,6 +4,8 @@ import { ExerciseListComponent } from '../exercise-list/exercise-list.component'
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
+import { convertToNote } from '../../utils/utils';
+
 @Component({
   selector: 'app-warmup-editor',
   templateUrl: './warmup-editor.component.html',
@@ -21,20 +23,16 @@ export class WarmupEditorComponent implements OnInit {
 
   warmupId: number = -1;
   isEdit: boolean = true;
-  loading: boolean = true;
-  err: string = null;
-
-  // TODO: Fetch predefinedExercises from db
-  predefinedExercises = [
-    { id: 0, name: 'Bocca Chiusa' },
-    { id: 1, name: 'Vroli' },
-    { id: 2, name: 'O-I-A' },
-    { id: 3, name: 'Ziu ziu' },
-    { id: 4, name: 'Mei mai mei' },
-  ];
+  loadingWarmup: boolean = true;
+  loadingExercises: boolean = true;
+  fetchWarmupError: string = null;
+  fetchExercisesError: string = null;
+  createOrEditExercise: string = 'create';
+  editExerciseId: number = -1;
 
   // TODO: Load first exercise from warmup instead of a new with default values WHEN EDITTING
-  currentExercise = this.generateDefaultValue();
+  currentExercise = null;
+  predefinedExercises = null;
   warmup = null;
 
   ngOnInit(): void {
@@ -46,19 +44,27 @@ export class WarmupEditorComponent implements OnInit {
       this.isEdit = idParam !== null;
 
       if (this.isEdit) {
-        this.loading = true;
+        this.loadingWarmup = true;
         let params = { params: new HttpParams().set('id', this.warmupId.toString()) };
 
         this.http.get('http://127.0.0.1:8080/warmup/warmup', params)
           .subscribe((response: any) => {
             this.warmup = response.warmup;
-            this.loading = false;
+
+            if (this.warmup.exercises.length) {
+              this.currentExercise = this.generateExerciseDefaultValues();
+              this.currentExercise = this.changeSelectedExercise(0);
+            } else {
+              this.currentExercise = this.generateExerciseDefaultValues();
+            }
+
+            this.loadingWarmup = false;
           }, (err) => {
-            this.loading = false;
+            this.loadingWarmup = false;
             console.log('Error fetching warmup!', err);
             if (err.status === 404) {
               console.log('Error: this warmup does not exist!');
-              this.err = 'Error 404: Warmup not found.';
+              this.fetchWarmupError = 'Error 404: Warmup not found.';
             } else {
               console.log('Unable to fetch warmup. Try again later.');
             }
@@ -66,16 +72,57 @@ export class WarmupEditorComponent implements OnInit {
       } else {
         this.warmup = { id: -1, name: '', exercises: [] };
       }
+      
+      this.fetchExercises();
     });
   }
 
-  generateDefaultValue() {
+  fetchExercises() {
+    this.loadingExercises = true;
+    this.http.get('http://127.0.0.1:8080/exercises')
+      .subscribe((response: any) => {
+        this.predefinedExercises = response.exercises;
+        this.loadingExercises = false;
+
+        if (this.currentExercise === null) {
+          this.currentExercise = this.generateExerciseDefaultValues();
+        } else if (this.currentExercise.exercise === null) {
+          this.currentExercise.exercise = this.predefinedExercises[0];
+        }
+      }, (err: any) => {
+        this.loadingExercises = false;
+        this.fetchExercisesError = 'Unable to fetch predefined exercises. Try again later.';
+      });
+  }
+
+  generateExerciseDefaultValues() {
+    this.createOrEditExercise = 'create';
     return {
-      exercise: this.predefinedExercises[0],
+      exercise: this.predefinedExercises ? this.predefinedExercises[0] : null,
       customName: '',
       range: { begin: 10, end: 20 },
       speed: 1,
     };
+  }
+
+  changeSelectedExercise(index: number) {
+    let exercise = this.warmup.exercises[index];
+    if (!this.warmup.exercises[index]) return;
+
+    let exerciseId = this.warmup.exercises[index].exerciseId;
+
+    this.currentExercise = this.currentExercise || {};
+
+    if (this.predefinedExercises) {
+      this.currentExercise.exercise = this.predefinedExercises.find(exercise => exercise.id === exerciseId);
+    }
+    this.currentExercise.range = exercise.range;
+    //this.currentExercise.speed = exercise.speed;
+
+    this.createOrEditExercise = 'edit';
+    this.editExerciseId = index+1;
+
+    return this.currentExercise;
   }
 
   getBeginMax() {
@@ -93,9 +140,17 @@ export class WarmupEditorComponent implements OnInit {
       speed: this.currentExercise.speed,
     };
 
-    this.exerciseList.addExercise(formattedExercise);
+    // TODO: Handling ONE array IN EACH component is a BAD idea. Later I should fix for it
+    // to be only one array..
+    if (this.createOrEditExercise === 'create') {
+      this.exerciseList.addExercise(formattedExercise);
+      this.warmup.exercises.push(formattedExercise);
+    } else {
+      this.exerciseList.updateExercise(formattedExercise, this.editExerciseId);
+      this.warmup.exercises[this.editExerciseId] = formattedExercise;
+    }
 
-    this.currentExercise = this.generateDefaultValue();
+    this.currentExercise = this.generateExerciseDefaultValues();
   }
 
   save() {
@@ -107,18 +162,17 @@ export class WarmupEditorComponent implements OnInit {
     });
   }
 
-  changeSelectedExercise() {
-    console.log('Changing!');
+  convertToNote(note) {
+    return convertToNote(note);
   }
 
-  convertToNote(note) {
-    if (isNaN(note)) return '--';
+  getSubtitle() {
+    return this.createOrEditExercise === 'create' ? 'New exercise' : `Edit exercise ${this.editExerciseId}`;
+  }
 
-    let noteNames = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
-
-    let parsedNote = parseInt(note);
-    let noteName = noteNames[parsedNote % noteNames.length]; 
-    let octave = Math.floor(parsedNote / noteNames.length) + 3
-    return `${noteName}${octave}`;
+  newExercise() {
+    this.createOrEditExercise = 'create';
+    this.editExerciseId = -1;
+    this.currentExercise = this.generateExerciseDefaultValues();    
   }
 }
