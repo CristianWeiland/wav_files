@@ -9,6 +9,7 @@ function getWarmupQuery(id) {
     W.id as id,
     W.name as name,
     W.filename as filename,
+    E.id as exercise_id,
     E.predefined_exercise_id as predefined_exercise_id,
     E.range_begin as range_begin,
     E.range_end as range_end,
@@ -39,8 +40,10 @@ function rawRowToWarmup(rowArray) {
   warmup.exercises = rowArray.map(row => {
     return {
       range: { begin: row.range_begin, end: row.range_end },
-      name: row.exercise_name || row.exercise_default_name,
-      exerciseId: row.predefined_exercise_id, // TODO: Change to predefinedExerciseId?
+      name: row.exercise_name,
+      exerciseId: row.exercise_id,
+      predefinedExerciseId: row.predefined_exercise_id,
+      defaultName: row.exercise_default_name,
     };
   });
 
@@ -50,49 +53,6 @@ function rawRowToWarmup(rowArray) {
 /* GET warmups listing. */
 router.get('/', function(req, res, next) {
   try {
-    // db request
-    /*let warmups = [
-      {
-        id: 1,
-        name: 'db Basic warmup (all)',
-        filename: null,
-        exercises: [
-          { exerciseId: 0, name: 'Bocca Chiusa', range: { begin: 10, end: 12 }},
-          { exerciseId: 1, name: 'Vroli vroli', range: { begin: 10, end: 12 }},
-          { exerciseId: 2, name: 'O - I - A', range: { begin: 10, end: 12 }},
-        ],
-      },
-      {
-        id: 2,
-        name: 'db Quick warmup (BC)',
-        filename: null,
-        exercises: [
-          { exerciseId: 0, name: 'Bocca Chiusa', range: { begin: 10, end: 12 }},
-        ],
-      },
-      {
-        id: 3,
-        name: 'Advanced warmup (vroli)',
-        filename: null,
-        exercises: [
-          { exerciseId: 1, name: 'Vroli vroli', range: { begin: 10, end: 12 }},
-          { exerciseId: 1, name: 'Vroli vroli', range: { begin: 10, end: 12 }},
-        ],
-      },
-      {
-        id: 4,
-        name: 'Range extension warmup (oia)',
-        filename: null,
-        exercises: [
-          { exerciseId: 2, name: 'O - I - A', range: { begin: 10, end: 12 }},
-          { exerciseId: 2, name: 'O - I - A', range: { begin: 10, end: 12 }},
-          { exerciseId: 2, name: 'O - I - A', range: { begin: 10, end: 12 }},
-          { exerciseId: 2, name: 'O - I - A', range: { begin: 10, end: 20 }},
-        ],
-      },
-    ];
-    */
-
     const query = getWarmupQuery();
 
     conn.query(query, (err, results, fields) => {
@@ -151,6 +111,7 @@ router.get('/warmup', function(req, res, next) {
 
 /* Save warmup. */
 router.post('/save', function(req, res, next) {
+  // TODO: Save in db
   try {
     let warmup = req.body;
 

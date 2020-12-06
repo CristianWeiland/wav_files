@@ -1,5 +1,5 @@
 CREATE TABLE exercises (
-    id int NOT NULL,
+    id int NOT NULL AUTO_INCREMENT,
     warmup_id int NOT NULL,
     predefined_exercise_id int NOT NULL,
     name text,

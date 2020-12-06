@@ -1,23 +1,14 @@
 import { DataSource } from '@angular/cdk/collections';
 import { Component, EventEmitter, Input, Output, OnInit, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
-import {
-  MatColumnDef, MatHeaderRowDef, MatNoDataRow, MatRowDef, MatTable, MatTableDataSource
-} from '@angular/material/table';
+import { MatColumnDef, MatHeaderRowDef, MatNoDataRow, MatRowDef, MatTable, MatTableDataSource } from '@angular/material/table';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { convertToNote } from '../../utils/utils';
 
-export interface Exercise {
-  exerciseId: number;
-  name: string;
-  range: {
-    begin: number,
-    end: number
-  };
-  //speed: number,
-}
+import { ExerciseInterface, WarmupInterface } from '../../utils/interfaces';
 
-let ELEMENT_DATA: Exercise[] = [];
+let ELEMENT_DATA: ExerciseInterface[] = [];
 
 @Component({
   selector: 'app-exercise-list',
@@ -28,38 +19,68 @@ let ELEMENT_DATA: Exercise[] = [];
 export class ExerciseListComponent implements OnInit {
 
   @Input() mode: string;
-  @Input() exercises: Exercise[];
+  @Input() warmupId: number;
+  @Input() exercises: ExerciseInterface[];
 
-  @Output() requestEdit = new EventEmitter<number>();
+  @Output() requestEdit = new EventEmitter<any>();
   @Output() requestDelete = new EventEmitter<number>();
 
-  constructor() { }
+  constructor(private http: HttpClient) {}
 
   displayedColumns: string[] = ['id', 'name', 'range', 'actions'];
-  dataSource = new MatTableDataSource<Exercise>(ELEMENT_DATA);
+  dataSource = new MatTableDataSource<ExerciseInterface>(ELEMENT_DATA);
+
+  warmup: WarmupInterface = null;
+  loadingWarmup: boolean = false;
+  fetchWarmupError: string = '';
 
   @ViewChild(MatTable) table: MatTable<any>;
 
   ngOnInit(): void {
     if (this.mode === 'edit') {
-      this.displayedColumns = ['id', 'name', 'range', 'actions'];
+      this.displayedColumns = ['id', 'name', 'predefinedExerise', 'range', 'actions'];
     } else { // mode === 'view'
-      this.displayedColumns = ['id', 'name', 'range'];
+      this.displayedColumns = ['id', 'name', 'predefinedExerise', 'range'];
     }
 
     ELEMENT_DATA.splice(0, ELEMENT_DATA.length);
 
-    this.exercises.forEach(exercise => {
-      ELEMENT_DATA.push(exercise);
-    });
+    this.fetchWarmup();
   }
 
-  ngAfterViewInit() {
-    this.table.renderRows();
+  fetchWarmup() {
+    if (this.mode === 'edit') {
+      this.loadingWarmup = true;
+      let params = { params: new HttpParams().set('id', this.warmupId.toString()) };
+
+      this.http.get('http://127.0.0.1:8080/warmup/warmup', params)
+        .subscribe((response: any) => {
+          this.warmup = response.warmup;
+
+          this.loadingWarmup = false;
+
+          ELEMENT_DATA.splice(0, ELEMENT_DATA.length);
+
+          response.warmup.exercises.forEach((exercise: ExerciseInterface) => {
+            ELEMENT_DATA.push(exercise);
+          });
+
+          if (this.table) this.table.renderRows();
+        }, (err) => {
+          this.loadingWarmup = false;
+          console.log('Error fetching warmup!', err);
+          if (err.status === 404) {
+            this.fetchWarmupError = 'Error 404: Warmup not found.';
+          }
+        });
+    } else {
+      this.warmup = { id: -1, name: '', exercises: [] };
+    }
   }
 
   selectExercise(index: number) {
-    this.requestEdit.emit(index);
+    let params = { id: index, exercise: this.warmup.exercises[index] };
+    this.requestEdit.emit(params);
   }
 
   deleteExercise(i: number) {
@@ -68,12 +89,12 @@ export class ExerciseListComponent implements OnInit {
     this.table.renderRows();
   }
 
-  addExercise(newExercise: Exercise) {
+  addExercise(newExercise: ExerciseInterface) {
     this.dataSource.data.push(newExercise);
     this.table.renderRows();
   }
 
-  updateExercise(newExercise: Exercise, id: number) {
+  updateExercise(newExercise: ExerciseInterface, id: number) {
     this.dataSource.data[id] = newExercise;
     this.table.renderRows();
   }

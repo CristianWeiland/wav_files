@@ -1,0 +1,64 @@
+
+<div *ngIf="exercise !== null && active" class="mat-elevation-z8" style="padding: 20px">
+  <div *ngIf="loadingPredefinedExercises" align="center">
+    <mat-spinner style="padding-bottom: 20px"></mat-spinner>
+  </div>
+
+  <h2 *ngIf="fetchPredefinedExercisesError">{{ fetchPredefinedExercisesError }}</h2>
+
+  <button mat-raised-button color="primary" (click)="goBack()">
+    <mat-icon>keyboard_return</mat-icon>
+  </button>
+  <h2 class="exercise-editor-subtitle">{{ getSubtitle() }}</h2>
+  <mat-form-field appearance="outline">
+    <mat-label>Exercise</mat-label>
+    <mat-select [(value)]="exercise.predefinedExerciseId">
+      <mat-option *ngFor="let predefinedExercise of predefinedExercises" [value]="predefinedExercise.id">
+        {{predefinedExercise.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="line-input">
+    <mat-label>Custom name</mat-label>
+    <input matInput placeholder="" [value]="exercise.customName" (change)="exercise.customName = $event.target.value">
+  </mat-form-field>
+
+  <div>
+    <label>Starting note: {{ convertToNote(exercise.range.begin) }} </label>
+    <div>
+      <b>{{convertToNote(10)}}</b>
+      <mat-slider
+        min="10"
+        [max]="getBeginMax()"
+        step="1"
+        thumbLabel="true"
+        [displayWith]="convertToNote"
+        [value]="exercise.range.begin"
+        (change)="exercise.range.begin = $event.value"></mat-slider>
+      <b>{{convertToNote(getBeginMax())}}</b>
+    </div>
+  </div>
+
+  <div>
+    <label>Ending note: {{ convertToNote(exercise.range.end) }} </label>
+    <div>
+      <b>{{convertToNote(getEndMin())}}</b>
+      <mat-slider
+        [min]="getEndMin()"
+        max="40"
+        step="1"
+        thumbLabel="true"
+        [displayWith]="convertToNote"
+        [value]="exercise.range.end"
+        (change)="exercise.range.end = $event.value"></mat-slider>
+      <b>{{convertToNote(40)}}</b>
+    </div>
+  </div>
+
+  <div class="small-note form-group">* Note: Starting and End note defines each other maximum and minimum value in the slider</div>
+
+  <div>
+    <button mat-raised-button color="primary" (click)="saveExercise(exercise)">Save exercise</button>
+  </div>
+</div>

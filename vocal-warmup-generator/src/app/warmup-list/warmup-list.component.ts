@@ -47,7 +47,6 @@ export class WarmupListComponent implements OnInit {
       });
   }
 
-  blob: any; // TODO: check if I need this here or it can be a local "let" inside downloadRequest
   downloadRequest(filename) {
     // download file
     const httpOptions = {
@@ -59,8 +58,6 @@ export class WarmupListComponent implements OnInit {
 
     this.http.get(`http://127.0.0.1:8080/audio/${filename}`, httpOptions)
       .subscribe((data: any) => {
-        //this.blob = new Blob([data], { type: 'audio/x-wav' });
-
         let downloadURL = window.URL.createObjectURL(data);
         let link = document.createElement('a');
         link.href = downloadURL;

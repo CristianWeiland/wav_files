@@ -1,0 +1,16 @@
+.exercise-editor-subtitle {
+  color: "#656565";
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.line-input {
+  display: table !important;
+}
+
+.small-note {
+  font-size: 12px;
+  font-style: italic;
+}

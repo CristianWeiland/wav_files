@@ -40,7 +40,7 @@
       <ng-container matColumnDef="expandedDetail">
         <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
           <div class="element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-            <app-exercise-list *ngIf="element.exercises" [exercises]="element.exercises"></app-exercise-list>
+            <app-exercise-list *ngIf="element.id" [exercises]="element.exercises" [warmupId]="element.id"></app-exercise-list>
             <div align="center" style="margin-top: 10px; margin-bottom: 10px;">
               <mat-spinner *ngIf="generating" diameter="75"></mat-spinner>
             </div>

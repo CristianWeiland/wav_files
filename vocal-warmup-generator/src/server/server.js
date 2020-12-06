@@ -8,7 +8,8 @@ let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
 let wavRouter = require('./routes/wav');
 let warmupRouter = require('./routes/warmup');
-let exercisesRouter = require('./routes/execises');
+let exercisesRouter = require('./routes/exercises');
+let predefinedExercisesRouter = require('./routes/predefined_exercises');
 
 let cors = require('cors');
 
@@ -30,6 +31,7 @@ app.use('/users', usersRouter);
 app.use('/wav', wavRouter);
 app.use('/warmup', warmupRouter);
 app.use('/exercises', exercisesRouter);
+app.use('/predefined_exercises', predefinedExercisesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

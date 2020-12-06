@@ -33,6 +33,7 @@ import { WarmupListComponent } from './warmup-list/warmup-list.component';
 
 // Directives
 import { ToolTipRendererDirective } from './app-directives/dynamic-tooltip-renderer.directive';
+import { ExerciseEditorComponent } from './exercise-editor/exercise-editor.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { ToolTipRendererDirective } from './app-directives/dynamic-tooltip-rende
     ToolTipRendererDirective,
     ExerciseListComponent,
     InstructionsComponent,
+    ExerciseEditorComponent,
   ],
   imports: [
     AppRoutingModule,

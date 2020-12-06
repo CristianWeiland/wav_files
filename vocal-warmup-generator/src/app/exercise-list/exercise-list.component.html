@@ -1,5 +1,11 @@
 <div>
-  <table mat-table [dataSource]="dataSource" style="width: 100%">
+  <div *ngIf="loadingWarmup" align="center">
+    <mat-spinner style="padding-bottom: 20px"></mat-spinner>
+  </div>
+
+  <h2 *ngIf="fetchWarmupError">{{ fetchWarmupError }}</h2>
+
+  <table *ngIf="warmup && warmup.exercises" mat-table [dataSource]="dataSource" style="width: 100%">
     <ng-content></ng-content>
 
     <ng-container matColumnDef="id">
@@ -12,6 +18,11 @@
       <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
     </ng-container>
 
+    <ng-container matColumnDef="predefinedExerise">
+      <th mat-header-cell *matHeaderCellDef> Predefined exercise </th>
+      <td mat-cell *matCellDef="let element"> {{ element.defaultName }} </td>
+    </ng-container>
+
     <ng-container matColumnDef="range">
       <th mat-header-cell *matHeaderCellDef> Range </th>
       <td mat-cell *matCellDef="let element"> {{ convertToNote(element.range.begin) }} - {{ convertToNote(element.range.end) }} </td>
@@ -21,10 +32,10 @@
       <th mat-header-cell *matHeaderCellDef> Actions </th>
       <td mat-cell *matCellDef="let element; let i = index" style="width: 286px">
         <div class="exercise-actions-grid">
-          <button mat-button class="icon-button" (click)="selectExercise(i)">
+          <button matTooltip="Edit exercise" mat-button class="icon-button" (click)="selectExercise(i)">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-button class="icon-button" (click)="deleteExercise(i)">
+          <button matTooltip="Delete exercise" mat-button class="icon-button" (click)="deleteExercise(i)">
             <mat-icon>delete</mat-icon>
           </button>
           <button [disabled]="i == 0" mat-button class="icon-button" (click)="swap(i, i-1)">
