@@ -62,7 +62,6 @@ export class MediaPlayerComponent implements OnInit {
   }
 
   sliderDropped() {
-    console.log('dropped, playing before: ', this.playingBeforeMovingSlider);
     this.isPlaying = this.playingBeforeMovingSlider;
     if (this.isPlaying) {
       this.audio.play();

@@ -1,42 +1,30 @@
 <div class="content">
   <h1 class="warmup-editor-title">Warmup editor</h1>
-  <div *ngIf="(!loadingWarmup && !loadingExercises && !fetchWarmupError && !fetchExercisesError); else alternateFeedback">
-    <div>
-      <div [hidden]="currentlyEditting === 'exercise'" class="mat-elevation-z8" style="padding: 20px">
+  <div>
+    <div [hidden]="currentlyEditting === 'exercise'" class="mat-elevation-z8" style="padding: 20px">
 
-        <mat-form-field appearance="outline" class="line-input">
-          <mat-label>Warmup name</mat-label>
-          <input matInput placeholder="" [value]="warmupName" (change)="warmupName = $event.target.value">
-        </mat-form-field>
-        <div style="inline-block; float: right">
-          <button mat-raised-button color="accent" (click)="saveWarmup()">Save warmup</button>
-        </div>
-
-        <h2 class="warmup-editor-subtitle">Defined exercises</h2>
-        <div class="left-panel">
-          <app-exercise-list *ngIf="warmupId !== null" mode="edit" [warmupId]="warmupId"
-            (requestEdit)="editExercise($event)" (warmupLoaded)="fetchWarmupName($event)"></app-exercise-list>
-          <div style="padding-top: 20px" align="right">
-            <button mat-raised-button color="primary" (click)="newExercise()">Create new exercise</button>
-          </div>
-        </div>
+      <mat-form-field appearance="outline" class="line-input">
+        <mat-label>Warmup name</mat-label>
+        <input matInput placeholder="" [value]="warmupName" (change)="warmupName = $event.target.value">
+      </mat-form-field>
+      <div style="inline-block; float: right">
+        <button mat-raised-button color="accent" (click)="saveWarmup()">Save warmup</button>
       </div>
 
-      <app-exercise-editor [exerciseId]="editExerciseId" [active]="currentlyEditting === 'exercise'" [warmupId]="warmupId"
-        (back)="showList()" (reloadWarmup)="reloadWarmup()"></app-exercise-editor>
+      <h2 class="warmup-editor-subtitle">Defined exercises</h2>
+      <div class="left-panel">
+        <app-exercise-list *ngIf="warmupId !== null" mode="edit" [warmupId]="warmupId"
+          (requestEdit)="editExercise($event)" (warmupLoaded)="fetchWarmupName($event)"></app-exercise-list>
+        <div style="padding-top: 20px" align="right">
+          <button mat-raised-button color="primary" (click)="newExercise()">Create new exercise</button>
+        </div>
+      </div>
     </div>
-    <div *ngIf="warmup" style="padding-top: 20px">
-      <button style="float: right" mat-raised-button color="accent" (click)="save()">Save warmup</button>
-    </div>
+
+    <app-exercise-editor [exerciseId]="editExerciseId" [active]="currentlyEditting === 'exercise'" [warmupId]="warmupId"
+      (back)="showList()" (reloadWarmup)="reloadWarmup()"></app-exercise-editor>
   </div>
-
-  <ng-template #alternateFeedback>
-    <div class="mat-elevation-z8" style="padding: 20px">
-      <h1 *ngIf="fetchWarmupError" style="color::rgb(231, 69, 86)">{{fetchWarmupError}}</h1>
-      <h1 *ngIf="fetchExercisesError" style="color:rgb(231, 69, 86)">{{fetchExercisesError}}</h1>
-      <div *ngIf="loadingWarmup || loadingExercises" align="center">
-        <mat-spinner></mat-spinner>
-      </div>
-    </div>
-  </ng-template>
+  <div *ngIf="warmup" style="padding-top: 20px">
+    <button style="float: right" mat-raised-button color="accent" (click)="save()">Save warmup</button>
+  </div>
 </div>

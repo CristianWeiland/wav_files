@@ -24,7 +24,7 @@ router.post('/save', function(req, res, next) {
         UPDATE exercises
         SET
           predefined_exercise_id = ${exercise.predefinedExerciseId},
-          name = "${customName}",
+          name = ${customName},
           range_begin = ${exercise.range.begin},
           range_end = ${exercise.range.end}
         WHERE id = ${id};`;
@@ -33,6 +33,30 @@ router.post('/save', function(req, res, next) {
     conn.query(query, (err, results, fields) => {
       if (!err) {
         res.status(200).send();
+      } else {
+        console.log(err);
+        res.status(500).send({ message: 'Error saving exercise.' });
+      }
+    });
+  } catch (err) {
+    console.log('Error saving exercise!', err);
+    res.status(500).send({ message: 'Error saving exercise.' });
+  }
+});
+
+router.delete('/delete', function(req, res, next) {
+  try {
+    let id = req.query.id;
+    let query;
+    if (id === undefined) {
+      res.status(500).send({ message: 'Provide an ID to be deleted.' });
+    } else {
+      query = `UPDATE exercises SET deleted_at = now() WHERE id = ${id};`;
+    }
+
+    conn.query(query, (err, results, fields) => {
+      if (!err) {
+        res.status(200).send({ message: 'Exercise deleted successfully!' });
       } else {
         console.log(err);
         res.status(500).send({ message: 'Error saving exercise.' });

@@ -3,5 +3,7 @@ CREATE TABLE warmups (
     user_id int NOT NULL,
     name text,
     filename text,
+    deleted_at datetime,
+    updated_at datetime,
     PRIMARY KEY (ID)
 );

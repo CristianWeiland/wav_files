@@ -402,6 +402,10 @@ function generateFullWarmup(params) {
         for (let j = 0; j < exercise.range.begin; ++j) {
             initialNote = getNextNote(initialNote);
         }
+        if (!generators[exercise.exerciseId]) {
+            console.log(`Invalid generator! No predefined exercise with ID ${exercise.exerciseId}! Aborting...`);
+            return;
+        }
         generateWarmup(generators[exercise.exerciseId], initialNote, range);
         // TODO: Sound data is global, I do not need to send as parameter...
         generatePause(soundData, 2);

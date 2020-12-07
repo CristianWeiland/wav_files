@@ -50,7 +50,7 @@ export class ExerciseListComponent implements OnInit {
   }
 
   fetchWarmup() {
-    if (this.mode === 'edit') {
+    if (this.warmupId !== null) {
       this.loadingWarmup = true;
       let params = { params: new HttpParams().set('id', this.warmupId.toString()) };
 
@@ -88,9 +88,19 @@ export class ExerciseListComponent implements OnInit {
 
   deleteExercise(i: number) {
     // TODO: Request back-end to delete!
-    this.dataSource.data.splice(i, 1);
-    this.requestDelete.emit(i);
-    this.table.renderRows();
+
+    this.http.delete('http://127.0.0.1:8080/exercises/delete', { params: { id: this.warmup.exercises[i].exerciseId.toString() } })
+      .subscribe((response: any) => {
+        //this._snackBar.open('Exercise saved succesfully', 'Awesome!', { duration: 5000 });
+
+        this.dataSource.data.splice(i, 1);
+        this.requestDelete.emit(i);
+        this.table.renderRows();
+      }, err => {
+        console.log(err);
+
+        //this._snackBar.open('Unable to save exercise.', '', { duration: 5000 });
+      });
   }
 
   addExercise(newExercise: ExerciseInterface) {

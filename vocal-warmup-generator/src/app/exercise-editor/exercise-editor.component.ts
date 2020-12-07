@@ -37,7 +37,7 @@ export class ExerciseEditorComponent implements OnInit {
   generateExerciseDefaultValues() {
     this.exercise = {
       predefinedExerciseId: this.predefinedExercises && this.predefinedExercises.length > 0 ?
-        this.predefinedExercises[0] : null,
+        this.predefinedExercises[0].id : null,
       customName: '',
       range: { begin: 10, end: 20 },
       speed: 1,

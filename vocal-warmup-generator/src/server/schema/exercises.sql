@@ -5,6 +5,8 @@ CREATE TABLE exercises (
     name text,
     range_begin int,
     range_end int,
+    deleted_at datetime,
+    updated_at datetime,
     PRIMARY KEY (id),
     FOREIGN KEY (warmup_id) REFERENCES warmups(id),
     FOREIGN KEY (predefined_exercise_id) REFERENCES predefined_exercises(id)

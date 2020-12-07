@@ -20,10 +20,11 @@ function getWarmupQuery(id) {
   JOIN
     exercises E ON W.id = E.warmup_id
   JOIN
-    predefined_exercises PE ON E.predefined_exercise_id = PE.id`;
+    predefined_exercises PE ON E.predefined_exercise_id = PE.id
+  WHERE E.deleted_at IS NULL`;
 
   if (id) {
-    query += ` WHERE W.id = ${id}`;
+    query += ` AND W.id = ${id}`;
   }
 
   return query;
