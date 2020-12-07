@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ExerciseListComponent } from '../exercise-list/exercise-list.component';
 import { ExerciseEditorComponent } from '../exercise-editor/exercise-editor.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-warmup-editor',
@@ -11,10 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class WarmupEditorComponent implements OnInit {
 
-  constructor(
-    private route: ActivatedRoute,
-    private _snackBar: MatSnackBar,
-  ) {}
+  constructor(private route: ActivatedRoute, private http: HttpClient, private _snackBar: MatSnackBar) {}
 
   @ViewChild(ExerciseListComponent) exerciseList: ExerciseListComponent;
   @ViewChild(ExerciseEditorComponent) exerciseEditor: ExerciseEditorComponent;
@@ -24,8 +22,8 @@ export class WarmupEditorComponent implements OnInit {
 
   currentlyEditting: string = 'warmup';
 
-  // TODO: Load first exercise from warmup instead of a new with default values WHEN EDITTING
   warmup = null;
+  warmupName: string = '';
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -35,14 +33,24 @@ export class WarmupEditorComponent implements OnInit {
     });
   }
 
-  save() {
-    // NEED TO CALL A FUNCTION FROM APP-EXERCISE-LIST TO FETCH THE LATEST EXERCISES
-    let warmup = this.exerciseList.getFullWarmup();
+  saveWarmup() {
+    // TODO: Prevent double call until I have a response!
+    if (!this.warmupName) {
+      this._snackBar.open('Warmup name can not be blank!', 'Ok!', { duration: 5000 });
+      return;
+    }
 
-    // TODO: Save on db
-    this._snackBar.open('Warmup saved successfully!', 'Ok!', {
-      duration: 5000,
-    });
+    let parsedWarmup = this.exerciseList.getFullWarmup();
+    parsedWarmup.name = this.warmupName;
+    parsedWarmup.id = this.warmupId;
+
+    this.http.post('http://127.0.0.1:8080/warmup/save', { params: parsedWarmup })
+      .subscribe((response: any) => {
+        this._snackBar.open('Warmup saved succesfully', 'Awesome!', { duration: 5000 });
+      }, err => {
+        console.log(err);
+        this._snackBar.open('Unable to save warmup.', '', { duration: 5000 });
+      });
   }
 
   newExercise() {
@@ -63,5 +71,9 @@ export class WarmupEditorComponent implements OnInit {
 
   reloadWarmup() {
     this.exerciseList.fetchWarmup();
+  }
+
+  fetchWarmupName(warmup) {
+    this.warmupName = warmup.name;
   }
 }

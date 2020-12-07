@@ -22,6 +22,7 @@ export class ExerciseListComponent implements OnInit {
   @Input() warmupId: number;
   @Input() exercises: ExerciseInterface[];
 
+  @Output() warmupLoaded = new EventEmitter<any>();
   @Output() requestEdit = new EventEmitter<any>();
   @Output() requestDelete = new EventEmitter<number>();
 
@@ -65,6 +66,8 @@ export class ExerciseListComponent implements OnInit {
             ELEMENT_DATA.push(exercise);
           });
 
+          this.warmupLoaded.emit({ name: this.warmup.name });
+
           if (this.table) this.table.renderRows();
         }, (err) => {
           this.loadingWarmup = false;
@@ -84,6 +87,7 @@ export class ExerciseListComponent implements OnInit {
   }
 
   deleteExercise(i: number) {
+    // TODO: Request back-end to delete!
     this.dataSource.data.splice(i, 1);
     this.requestDelete.emit(i);
     this.table.renderRows();
@@ -100,7 +104,7 @@ export class ExerciseListComponent implements OnInit {
   }
 
   getFullWarmup() {
-    return ELEMENT_DATA;
+    return this.warmup;
   }
 
   getRowStyle() {

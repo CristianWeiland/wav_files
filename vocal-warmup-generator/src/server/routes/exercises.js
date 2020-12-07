@@ -7,11 +7,11 @@ router.post('/save', function(req, res, next) {
   try {
     let exercise = req.body.params;
     let id = exercise.exerciseId;
+    let customName = exercise.customName ? `"${exercise.customName}"` : null;
     // TODO: Validate if WarmupID and PredefinedExerciseID are valid!
     let query;
 
     if (id === undefined) {
-      let customName = exercise.customName ? `"${exercise.customName}"` : null;
 
       query = `
         INSERT INTO exercises
@@ -24,7 +24,7 @@ router.post('/save', function(req, res, next) {
         UPDATE exercises
         SET
           predefined_exercise_id = ${exercise.predefinedExerciseId},
-          name = "${exercise.customName}",
+          name = "${customName}",
           range_begin = ${exercise.range.begin},
           range_end = ${exercise.range.end}
         WHERE id = ${id};`;

@@ -111,11 +111,30 @@ router.get('/warmup', function(req, res, next) {
 
 /* Save warmup. */
 router.post('/save', function(req, res, next) {
-  // TODO: Save in db
   try {
-    let warmup = req.body;
+    let warmup = req.body.params;
 
-    console.log('Saving warmup', warmup);
+    let id = warmup.id;
+    let name = warmup.name ? `"${warmup.name}"` : null;
+    // TODO: Validate if WarmupID and PredefinedExerciseID are valid!
+    let query;
+
+    if (id === undefined) {
+      query = `INSERT INTO warmups (name) VALUES (${name});`;
+    } else {
+      query = `UPDATE warmups SET name = ${name} WHERE id = ${id};`;
+    }
+
+    // TODO: Should I save exercises as well? Most likely yes...
+
+    conn.query(query, (err, results, fields) => {
+      if (!err) {
+        res.status(200).send();
+      } else {
+        console.log(err);
+        res.status(500).send({ message: 'Error saving exercise.' });
+      }
+    });
   } catch(err) {
     console.log('Error saving warmup!', err);
     res.status(500).send({ message: 'Error saving warmup' });
