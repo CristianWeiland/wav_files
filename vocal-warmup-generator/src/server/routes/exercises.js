@@ -2,8 +2,9 @@ let express = require('express');
 let router = express.Router();
 
 let conn = require('../db/db');
+let { requireLogin } = require('../auth/auth');
 
-router.post('/save', function(req, res, next) {
+router.post('/save', requireLogin, function(req, res, next) {
   try {
     let exercise = req.body.params;
     let id = exercise.exerciseId;
@@ -44,7 +45,7 @@ router.post('/save', function(req, res, next) {
   }
 });
 
-router.delete('/delete', function(req, res, next) {
+router.delete('/delete', requireLogin, function(req, res, next) {
   try {
     let id = req.query.id;
     let query;

@@ -2,6 +2,7 @@ let express = require('express');
 let router = express.Router();
 
 let conn = require('../db/db');
+let { requireLogin } = require('../auth/auth');
 
 function getWarmupQuery(id) {
   // TODO: Filter by user ID
@@ -52,7 +53,7 @@ function rawRowToWarmup(rowArray) {
 }
 
 /* GET warmups listing. */
-router.get('/', function(req, res, next) {
+router.get('/', requireLogin, function(req, res, next) {
   try {
     const query = getWarmupQuery();
 
@@ -87,7 +88,8 @@ router.get('/', function(req, res, next) {
 });
 
 /* GET warmup. */
-router.get('/warmup', function(req, res, next) {
+router.get('/warmup', requireLogin, function(req, res, next) {
+  console.log('warmp UID ', req.session.userId);
   try {
     let id = req.query.id;
 
@@ -111,7 +113,7 @@ router.get('/warmup', function(req, res, next) {
 });
 
 /* Save warmup. */
-router.post('/save', function(req, res, next) {
+router.post('/save', requireLogin, function(req, res, next) {
   try {
     let warmup = req.body.params;
 

@@ -2,9 +2,10 @@ let express = require('express');
 let router = express.Router();
 
 let wavGenerator = require('../utils/wav-generator');
+let { requireLogin } = require('../auth/auth');
 
 /* Generate a warmup. */
-router.post('/generate', function(req, res, next) {
+router.post('/generate', requireLogin, function(req, res, next) {
   try {
     let warmup = req.body;
 

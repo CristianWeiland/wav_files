@@ -5,6 +5,8 @@ import { ExerciseEditorComponent } from '../exercise-editor/exercise-editor.comp
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClient } from '@angular/common/http';
 
+import { url } from '../../utils/baseUrl';
+
 @Component({
   selector: 'app-warmup-editor',
   templateUrl: './warmup-editor.component.html',
@@ -44,7 +46,7 @@ export class WarmupEditorComponent implements OnInit {
     parsedWarmup.name = this.warmupName;
     parsedWarmup.id = this.warmupId;
 
-    this.http.post('http://127.0.0.1:8080/warmup/save', { params: parsedWarmup })
+    this.http.post(`${url}/warmup/save`, { params: parsedWarmup })
       .subscribe((response: any) => {
         this._snackBar.open('Warmup saved succesfully', 'Awesome!', { duration: 5000 });
       }, err => {

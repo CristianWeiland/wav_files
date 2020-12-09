@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+import { url } from '../../utils/baseUrl';
 import { convertToNote } from '../../utils/utils';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -46,7 +47,7 @@ export class ExerciseEditorComponent implements OnInit {
 
   fetchPredefinedExercises() {
     this.loadingPredefinedExercises = true;
-    this.http.get('http://127.0.0.1:8080/predefined_exercises')
+    this.http.get(`${url}/predefined_exercises`)
       .subscribe((response: any) => {
         this.predefinedExercises = response.predefined_exercises;
         this.loadingPredefinedExercises = false;
@@ -102,7 +103,7 @@ export class ExerciseEditorComponent implements OnInit {
       warmupId: this.warmupId,
     };
 
-    this.http.post('http://127.0.0.1:8080/exercises/save', { params: parsedExercise })
+    this.http.post(`${url}/exercises/save`, { params: parsedExercise })
       .subscribe((response: any) => {
         this._snackBar.open('Exercise saved succesfully', 'Awesome!', { duration: 5000 });
 

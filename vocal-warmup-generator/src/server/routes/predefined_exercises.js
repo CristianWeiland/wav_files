@@ -2,9 +2,10 @@ let express = require('express');
 let router = express.Router();
 
 let conn = require('../db/db');
+let { requireLogin } = require('../auth/auth');
 
 /* GET exercises listing. */
-router.get('/', function(req, res, next) {
+router.get('/', requireLogin, function(req, res, next) {
   try {
     // db request
     conn.query(`SELECT id, name FROM predefined_exercises;`, (err, results, fields) => {

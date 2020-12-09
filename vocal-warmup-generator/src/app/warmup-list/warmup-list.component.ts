@@ -3,6 +3,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClient } from '@angular/common/http';
 
+import { url } from '../../utils/baseUrl';
 import { removeFilenameCollisionAvoider } from '../../utils/utils';
 
 @Component({
@@ -34,10 +35,12 @@ export class WarmupListComponent implements OnInit {
   generating: boolean = false;
 
   ngOnInit(): void {
+    console.log('zz ', localStorage.getItem('connect.sid'));
+
     this.fetchingWarmups = true;
     this.fetchingWarmupsError = null;
 
-    this.http.get('http://127.0.0.1:8080/warmup/')
+    this.http.get(`${url}/warmup/`)
       .subscribe((response: any) => {
         this.fetchingWarmups = false;
         this.warmupList = response.warmups;
@@ -56,7 +59,7 @@ export class WarmupListComponent implements OnInit {
       //}),
     };
 
-    this.http.get(`http://127.0.0.1:8080/audio/${filename}`, httpOptions)
+    this.http.get(`${url}/audio/${filename}`, httpOptions)
       .subscribe((data: any) => {
         let downloadURL = window.URL.createObjectURL(data);
         let link = document.createElement('a');
@@ -75,13 +78,13 @@ export class WarmupListComponent implements OnInit {
     this.audio = null;
     this.generating = true;
 
-    this.http.post('http://127.0.0.1:8080/wav/generate', params)
+    this.http.post(`${url}/wav/generate`, params)
       .subscribe((response: any) => {
         warmup.filename = response.filename;
         this.generating = false;
         if (updateAudio) {
           this.audio = new Audio();
-          this.audio.src = `http://127.0.0.1:8080/audio/${response.filename}`;
+          this.audio.src = `${url}/audio/${response.filename}`;
         } else {
           this.downloadRequest(response.filename);
         }
@@ -111,7 +114,7 @@ export class WarmupListComponent implements OnInit {
         this.generateWarmup(warmup, true);
       } else {
         this.audio = new Audio();
-        this.audio.src = `http://127.0.0.1:8080/audio/${warmup.filename}`;
+        this.audio.src = `${url}/audio/${warmup.filename}`;
       }
     }
   }

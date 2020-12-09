@@ -36,3 +36,14 @@
 
 @media screen and (max-width: 575px) {
 }
+
+.toolbar-link {
+  margin-left: 30px;
+  color: #eeeeee;
+  text-decoration: none;
+  padding: 20px;
+}
+
+.toolbar-link:hover {
+  background-color: #43129a;
+}
