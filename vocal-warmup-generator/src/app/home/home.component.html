@@ -30,22 +30,33 @@
           <mat-card-title>Login</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <form>
+          <form #loginForm="ngForm">
             <mat-form-field appearance="outline" style="width: 100%">
               <mat-label>E-mail</mat-label>
-              <input matInput placeholder="Ex. yourname@provider.com" (change)="login.email=$event.target.value" [value]="login.email">
+              <input matInput name="loginEmail" placeholder="Ex. yourname@provider.com"
+                [(ngModel)]="login.email" required email #loginEmail="ngModel">
+              <mat-error *ngIf="loginEmail.invalid && (loginEmail.dirty || loginEmail.touched) && loginEmail.errors.required">
+                Email is required!
+              </mat-error>
+              <mat-error *ngIf="loginEmail.invalid && (loginEmail.dirty || loginEmail.touched) && loginEmail.errors.email">
+                Email must be in email format!
+              </mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" style="width: 100%">
               <mat-label>Password</mat-label>
-              <input matInput type="password" placeholder="Password" (change)="login.password=$event.target.value" [value]="login.password">
+              <input matInput name="loginPassword" required #loginPassword="ngModel" type="password"
+                placeholder="Password" [(ngModel)]="login.password">
+              <mat-error *ngIf="loginPassword.invalid && (loginPassword.dirty || loginPassword.touched) && loginPassword.errors.required">
+                Password is required!
+              </mat-error>
             </mat-form-field>
-          </form>
 
-          <div style="margin-bottom: 15px;">
-            <button mat-raised-button color="primary" (click)="handleLogin()" [disabled]="loggingIn">Login</button>
-            <a style="margin-left: 15px">Forgot your password?</a>
-          </div>
+            <div style="margin-bottom: 15px;">
+              <button type="submit" mat-raised-button color="primary" (click)="handleLogin()" [disabled]="loggingIn || loginForm.invalid">Login</button>
+              <a style="margin-left: 15px">Forgot your password?</a>
+            </div>
+          </form>
 
         </mat-card-content>
       </mat-card>
@@ -56,31 +67,53 @@
           <mat-card-title>Register</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <form>
+          <form #registerForm="ngForm">
             <mat-form-field appearance="outline" style="width: 100%">
               <mat-label>First name</mat-label>
-              <input matInput placeholder="Johnny" (change)="register.firstName=$event.target.value" [value]="register.firstName">
+              <input matInput name="firstName" required placeholder="Johnny"
+                [(ngModel)]="register.firstName" #firstName="ngModel">
+              <mat-error *ngIf="firstName.invalid && (firstName.dirty || firstName.touched) && firstName.errors.required">
+                First name is required!
+              </mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" style="width: 100%">
               <mat-label>Last name</mat-label>
-              <input matInput placeholder="Bravo" (change)="register.lastName=$event.target.value" [value]="register.lastName">
+              <input matInput placeholder="Bravo" required
+                [(ngModel)]="register.lastName" name="lastName" #lastName="ngModel">
+              <mat-error *ngIf="lastName.invalid && (lastName.dirty || lastName.touched) && lastName.errors.required">
+                Last name is required!
+              </mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" style="width: 100%">
               <mat-label>E-mail</mat-label>
-              <input matInput placeholder="Ex. yourname@provider.com" (change)="register.email=$event.target.value" [value]="register.email">
+              <input matInput placeholder="Ex. yourname@provider.com" required email
+                [(ngModel)]="register.email" name="email" #email="ngModel">
+              <mat-error *ngIf="email.invalid && (email.dirty || email.touched) && email.errors.required">
+                Email is required!
+              </mat-error>
+              <mat-error *ngIf="email.invalid && (email.dirty || email.touched) && email.errors.email">
+                Email must be in email format!
+              </mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" style="width: 100%">
               <mat-label>Password</mat-label>
-              <input matInput type="password" placeholder="Password" (change)="register.password=$event.target.value" [value]="register.password">
+              <input matInput type="password" placeholder="Password" required
+                [(ngModel)]="register.password" name="password" #password="ngModel">
+              <mat-error *ngIf="password.invalid && (password.dirty || password.touched) && password.errors.required">
+                Password is required!
+              </mat-error>
             </mat-form-field>
-          </form>
 
-          <div style="margin-bottom: 15px;">
-            <button mat-raised-button color="accent" (click)="handleRegister()" [disabled]="registering">Register</button>
-          </div>
+            <div style="margin-bottom: 15px;">
+              <!--<button mat-raised-button color="accent" (click)="handleRegister()" [disabled]="registering">Register</button>-->
+              <button mat-raised-button color="accent" (click)="handleRegister()" [disabled]="registering || registerForm.invalid">
+                Register
+              </button>
+            </div>
+          </form>
 
         </mat-card-content>
       </mat-card>

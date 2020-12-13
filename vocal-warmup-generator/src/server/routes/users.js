@@ -30,15 +30,8 @@ router.get('/login', function(req, res, next) {
         bcrypt.compare(plainTextPassword, hashedPasswordFromDb, function(err, result) {
           if (result) {
             req.session.userId = results[0].id;
-            console.log(req.session);
-            console.log(req.sessionID);
-            //req.mySession.userId = results[0].id;
-            //console.log('sId', req.mySession.userId);
-            //res.setHeader('Access-Control-Expose-Headers', 'Set-Cookie');
             res.setHeader("Access-Control-Expose-Headers", "*");
             res.setHeader("Access-Control-Allow-Headers", "*");
-
-            //res.setHeader("Access-Control-Allow-Headers", "Authorization, X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept, Set-Cookie");
 
             res.status(200).send({ message: 'Logged in' });
           } else {
@@ -54,51 +47,17 @@ router.get('/login', function(req, res, next) {
   }
 });
 
-
-router.post('/login', function(req, res, next) {
-  try {
-    let email = req.body.user.email;
-    let plainTextPassword = req.body.user.password;
-
-    let query = `SELECT id, email, password FROM users WHERE email = "${email}" AND deleted_at IS NULL;`
-
-    conn.query(query, (err, results, fields) => {
-
-      const invalidEmailOrPassword = 'Invalid email or password';
-
-      if (results) {
-        let hashedPasswordFromDb = results[0].password;
-
-        bcrypt.compare(plainTextPassword, hashedPasswordFromDb, function(err, result) {
-          if (result) {
-            req.session.id = results[0].id;
-            console.log(req.session);
-            console.log(req.sessionID);
-            //req.mySession.userId = results[0].id;
-            //console.log('sId', req.mySession.userId);
-            //res.setHeader('Access-Control-Expose-Headers', 'Set-Cookie');
-            res.setHeader("Access-Control-Expose-Headers", "*");
-            res.setHeader("Access-Control-Allow-Headers", "*");
-            res.setHeader("x-test", "alala");
-
-            //res.setHeader("Access-Control-Allow-Headers", "Authorization, X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept, Set-Cookie");
-
-            res.status(200).send({ message: 'Logged in' });
-          } else {
-            res.status(401).send({ message: invalidEmailOrPassword });
-          }
-        });
-      } else {
-        res.status(401).send({ message: invalidEmailOrPassword });
-      }
-    });
-  } catch (e) {
-    console.log(e);
+router.post('/logout', function(req, res, next) {
+  if (!req.session || !req.session.userId) {
+    console.log('Unable to logout: user was not logged in');
+    return res.status(401).send({ message: 'Not logged in' });
   }
+
+  delete req.session.userId;
+  res.status(200).send({ message: 'Logout successful' });
 });
 
 router.post('/register', function(req, res, next) {
-  console.log('register');
   try {
     let user = req.body.user;
     bcrypt.hash(user.password, saltRounds, (err, hashedPassword) => {

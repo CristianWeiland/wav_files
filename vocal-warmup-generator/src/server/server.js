@@ -2,7 +2,6 @@ let createError = require('http-errors');
 let express = require('express');
 let path = require('path');
 let logger = require('morgan');
-let cors = require('cors');
 
 const session = require('express-session');
 //let sessions = require('client-sessions'); TODO: Remove client-sessions component!
@@ -18,8 +17,6 @@ let exercisesRouter = require('./routes/exercises');
 let predefinedExercisesRouter = require('./routes/predefined_exercises');
 
 let app = express();
-
-//app.use(cors());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -40,28 +37,6 @@ app.use(session({
   cookie: { secure: false, httpOnly: false, sameSite: 'strict' }
 }));
 
-/*
-app.use(sessions({
-  cookieName: 'mySession', // key name added to the request object
-  secret: secret, // should be a large unguessable string
-  duration: 24 * 60 * 60 * 1000, // how long the session will stay valid in ms
-  activeDuration: 1000 * 60 * 5 // if expiresIn < activeDuration, the session will be extended by activeDuration milliseconds
-}));
-*/
-/*
-app.use(function(req, res, next) {
-  console.log('middleware, ', req.session);
-  if (!req.mySession.seenyou) {
-    res.setHeader('X-Seen-You', 'true');
-  //} else {
-    // setting a property will automatically cause a Set-Cookie response
-    // to be sent
-    //req.mySession.seenyou = true;
-    //res.setHeader('X-Seen-You', 'false');
-  }
-  next();
-});
-*/
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/wav', wavRouter);

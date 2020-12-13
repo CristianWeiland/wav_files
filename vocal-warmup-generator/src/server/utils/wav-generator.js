@@ -372,7 +372,7 @@ function generateFullWarmup(params) {
     */
     if (!params) {
         console.log('No params! Aborting...');
-        return;
+        return { error: 'no_params' };
     }
     soundData.splice(0, soundData.length);
 
@@ -385,16 +385,16 @@ function generateFullWarmup(params) {
             || !exercise.range.begin || !exercise.range.end) {
             console.log(`Invalid exercise! Aborting at exercise ${i}... exercise were:`, exercise);
             console.log('Expected format: { exerciseId: 0, range: { begin: 10, end: 20 }');
-            return;
+            return { error: 'invalid_exercise_params' };
         }
 
         exercise.range.begin = parseInt(exercise.range.begin);
         exercise.range.end = parseInt(exercise.range.end);
 
-        if (exercise.range.begin < 1 || !exercise.range.begin > !exercise.range.end) {
+        if (exercise.range.begin < 1 || !exercise.range.begin > !exercise.range.end || exercise.range.end > 50) {
             console.log(`Invalid range! Aborting at exercise ${i}... exercise were:`, exercise);
             console.log('Expected format: { exerciseId: 0, range: { begin: 10, end: 20 }');
-            return;
+            return { error: 'invalid_range' };
         }
 
         let range = exercise.range.end - exercise.range.begin;
@@ -404,7 +404,7 @@ function generateFullWarmup(params) {
         }
         if (!generators[exercise.exerciseId]) {
             console.log(`Invalid generator! No predefined exercise with ID ${exercise.exerciseId}! Aborting...`);
-            return;
+            return { error: 'unknown_exercise' };
         }
         generateWarmup(generators[exercise.exerciseId], initialNote, range);
         // TODO: Sound data is global, I do not need to send as parameter...
@@ -428,7 +428,7 @@ function generateFullWarmup(params) {
 
     FS.writeFileSync(PATH.join(__dirname, `${outputDir}${filename}.wav`), fileStruct.toBuffer());
 
-    return `${filename}.wav`;
+    return { filename: `${filename}.wav` };
 };
 
 module.exports = generateFullWarmup;

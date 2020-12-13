@@ -46,41 +46,17 @@ export class HomeComponent {
     this.http.get(`${url}/users/login`, { withCredentials: true, observe: 'response', params: this.login })
       .subscribe((response: any) => {
         this.loggingIn = false;
+        localStorage.setItem('logged', 'true');
         this.router.navigateByUrl('warmups');
       }, err => {
-        console.log('err', err);
-
         this.loggingIn = false;
+        if (err.status === 400 && err.error.message === 'Already logged in.') {
+          localStorage.setItem('logged', 'true');
+          this.router.navigateByUrl('warmups');
+          return;
+        }
         this._snackBar.open('Invalid login or password', 'Ok', { duration: 5000 });
       });
-
-/*
-      let postOptions = {
-        headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-        withCredentials: true, 
-        observe: 'response' as 'response',
-      };
-    this.http.post(`${url}/users/login`, { user: this.login }, postOptions)
-    .subscribe((response: any) => {
-      console.log('resp', response);
-
-      console.log(response.headers.get('Set-Cookie'));
-      console.log(response.headers.get('X-TEST'));
-      const keys = response.headers.keys();
-      let headers = keys.map(key =>
-        `${key}: ${response.headers.get(key)}`);
-      
-      console.log(headers);
-
-      this.loggingIn = false;
-      //this.router.navigateByUrl('warmups');
-    }, err => {
-      console.log('err', err);
-
-      this.loggingIn = false;
-      this._snackBar.open('Invalid login or password', 'Ok', { duration: 5000 });
-    });
-*/
   }
 
   handleRegister() {
@@ -97,13 +73,18 @@ export class HomeComponent {
 
     this.http.post(`${url}/users/register`, { user: this.register })
       .subscribe((response: any) => {
-        console.log(response);
         this.registering = false;
       }, err => {
-        console.log(err);
-
         this.registering = false;
         this._snackBar.open(err.error.message, '', { duration: 5000 });
       });
+  }
+
+  errorMessage(errorKey, fieldName) {
+    if (this[errorKey].required) {
+      return `${fieldName} is required!`;
+    } else if (this[errorKey].email) {
+      return `${fieldName} must be an email!`;
+    }
   }
 }

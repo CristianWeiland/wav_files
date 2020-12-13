@@ -35,8 +35,6 @@ export class WarmupListComponent implements OnInit {
   generating: boolean = false;
 
   ngOnInit(): void {
-    console.log('zz ', localStorage.getItem('connect.sid'));
-
     this.fetchingWarmups = true;
     this.fetchingWarmupsError = null;
 
@@ -72,8 +70,10 @@ export class WarmupListComponent implements OnInit {
 
   generateWarmup(warmup, updateAudio) {
     let params = {
-      exercises: warmup.exercises,
       name: warmup.name,
+      exercises: warmup.exercises.map(exercise => {
+        return { ...exercise, exerciseId: exercise.predefinedExerciseId };
+      }),
     }
     this.audio = null;
     this.generating = true;
@@ -89,11 +89,21 @@ export class WarmupListComponent implements OnInit {
           this.downloadRequest(response.filename);
         }
       }, err => {
-        console.log(err);
+        if (err.error && err.error.error) {
+          let errorMsg = err.error.error;
+          if (errorMsg === 'no_params') {
+            this._snackBar.open('Unable to generate warmup: internal server error', '', { duration: 5000 });
+          } else if (errorMsg === 'invalid_exercise_params') {
+            this._snackBar.open('Unable to generate warmup: invalid exercise.', '', { duration: 5000 });
+          } else if (errorMsg === 'invalid_range') {
+            this._snackBar.open('Unable to generate warmup: range too large.', '', { duration: 5000 });
+          } else if (errorMsg === 'unknown_exercise') {
+            this._snackBar.open('Unable to generate warmup: unknown exercise.', '', { duration: 5000 });
+          }
+          return;
+        }
 
-        this._snackBar.open('Unable to generate warmup.', '', {
-          duration: 5000,
-        });
+        this._snackBar.open('Unable to generate warmup.', '', { duration: 5000 });
         this.expandedElement = null;
       });
   }

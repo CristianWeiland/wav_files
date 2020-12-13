@@ -4,7 +4,7 @@
     <mat-icon>library_music</mat-icon>
     <span style="font-size: 18px; font-weight: bold; margin-left: 10px">Home</span>
   </div>
-  <a [routerLink]="['warmups']" class="toolbar-link">Warmup list</a>
-  <a [routerLink]="['instructions']" class="toolbar-link">Instructions</a>
-  <div class="spacer"></div>
+  <a [hidden]="hideLogout()" [routerLink]="['warmups']" class="toolbar-link">Warmup list</a>
+  <a [hidden]="hideLogout()" [routerLink]="['instructions']" class="toolbar-link">Instructions</a>
+  <a [hidden]="hideLogout()" class="toolbar-link" (click)="logout()" style="margin-left: auto">Logout</a>
 </div>

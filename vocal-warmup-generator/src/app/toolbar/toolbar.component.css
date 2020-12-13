@@ -42,6 +42,7 @@
   color: #eeeeee;
   text-decoration: none;
   padding: 20px;
+  cursor: pointer;
 }
 
 .toolbar-link:hover {

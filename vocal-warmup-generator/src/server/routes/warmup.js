@@ -4,7 +4,7 @@ let router = express.Router();
 let conn = require('../db/db');
 let { requireLogin } = require('../auth/auth');
 
-function getWarmupQuery(id) {
+function getWarmupQuery(userId, id) {
   // TODO: Filter by user ID
   let query = `SELECT
     W.id as id,
@@ -22,7 +22,7 @@ function getWarmupQuery(id) {
     exercises E ON W.id = E.warmup_id
   JOIN
     predefined_exercises PE ON E.predefined_exercise_id = PE.id
-  WHERE E.deleted_at IS NULL`;
+  WHERE E.deleted_at IS NULL AND W.user_id = ${userId}`;
 
   if (id) {
     query += ` AND W.id = ${id}`;
@@ -55,7 +55,7 @@ function rawRowToWarmup(rowArray) {
 /* GET warmups listing. */
 router.get('/', requireLogin, function(req, res, next) {
   try {
-    const query = getWarmupQuery();
+    const query = getWarmupQuery(req.session.userId);
 
     conn.query(query, (err, results, fields) => {
       if (err) {
@@ -89,11 +89,10 @@ router.get('/', requireLogin, function(req, res, next) {
 
 /* GET warmup. */
 router.get('/warmup', requireLogin, function(req, res, next) {
-  console.log('warmp UID ', req.session.userId);
   try {
     let id = req.query.id;
 
-    const query = getWarmupQuery(id);
+    const query = getWarmupQuery(req.session.userId, id);
 
     conn.query(query, (err, results, fields) => {
       if (err) {
@@ -123,7 +122,7 @@ router.post('/save', requireLogin, function(req, res, next) {
     let query;
 
     if (id === undefined) {
-      query = `INSERT INTO warmups (name) VALUES (${name});`;
+      query = `INSERT INTO warmups (name, user_id) VALUES (${name}, ${req.session.userId});`;
     } else {
       query = `UPDATE warmups SET name = ${name} WHERE id = ${id};`;
     }
