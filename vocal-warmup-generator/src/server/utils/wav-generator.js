@@ -195,11 +195,24 @@ function getPreviousNote(note) {
     if (note[0] === 'C' && note[1] !== '#') return `B${parseInt(note[1])-1}`;
 }
 
-function generateWarmup(warmupCoreGenerator, firstNote, repetitions) {
-    let initialNote = firstNote;
-    for (let i = 0; i < repetitions; ++i) {
-        warmupCoreGenerator(initialNote, i != repetitions - 1);
-        initialNote = getNextNote(initialNote);
+function generateWarmup(warmupCoreGenerator, firstNote, repetitions, ascending) {
+    if (ascending) {
+        let initialNote = firstNote;
+        for (let i = 0; i < repetitions; ++i) {
+            warmupCoreGenerator(initialNote, i != repetitions - 1);
+            initialNote = getNextNote(initialNote);
+        }
+    } else {
+        let initialNote = firstNote;
+        // Descending exercises start at the highest note and go to the lowest
+        for (let i = 0; i < repetitions; ++i) {
+            initialNote = getNextNote(initialNote);
+        }
+        
+        for (let i = 0; i < repetitions; ++i) {
+            warmupCoreGenerator(initialNote, i != repetitions - 1);
+            initialNote = getPreviousNote(initialNote);
+        }
     }
 }
 
@@ -305,63 +318,77 @@ function warmup3Generator(firstNote, shouldModulate) {
     }
 }
 
-// ziu ziu ziu ziu zi
+// mei mai mei
 function warmup4Generator(firstNote, shouldModulate) {
+    let note1 = getNote(firstNote);
+    let note2Name = getNextNote(getNextNote(getNextNote(getNextNote(firstNote))));
+    let note2 = getNote(note2Name);
+    let note3Name = getNextNote(getNextNote(getNextNote(note2Name)));
+    let note3 = getNote(note3Name);
+
+    let duration = 0.2;
+    for (let i = 0; i < 2; ++i) {
+        generateSound(soundData, note1, duration);
+        generatePause(soundData, duration / 3);
+        generateSound(soundData, note2, duration);
+        generatePause(soundData, duration / 3);
+        generateSound(soundData, note3, duration);
+        generatePause(soundData, duration / 3);
+        generateSound(soundData, note2, duration);
+        generatePause(soundData, duration / 3);
+    }
+    generateSound(soundData, note1, duration);
+    generatePause(soundData, duration / 3);
+
+    if (shouldModulate) {
+        generateSound(soundData, note1, duration);
+        generatePause(soundData, duration / 3);
+        generateSound(soundData, getNote(getNextNote(firstNote)), duration * 2);
+        generatePause(soundData, duration / 3 * 2);
+    }
 }
 
-//generateWarmup(warmup1Generator, 'C4', 2); // bocca chiusa
-//generateWarmup(warmup2Generator, 'C4', 2); // vroli vroli
-//generateWarmup(warmup3Generator, 'C4', 2); // o - i - a
+// ziu ziu ziu ziu zi
+function warmup5Generator(firstNote, shouldModulate) {
+    let note0 = getNote(getPreviousNote(firstNote));
+    let note1 = getNote(firstNote);
+    let note2Name = getNextNote(getNextNote(firstNote));
+    let note2 = getNote(note2Name);
+    let note3Name = getNextNote(getNextNote(note2Name));
+    let note3 = getNote(note3Name);
+    let note4Name = getNextNote(note3Name);
+    let note4 = getNote(note4Name);
+    let note5Name = getNextNote(getNextNote(note4Name));
+    let note5 = getNote(note5Name);
 
-/* Music 3 */
-/*
-generateSound(soundData, getNote('C4'), 0.5);
-generateSound(soundData, getNote('E4'), 0.5);
-generateSound(soundData, getNote('G4'), 0.5);
-generateSound(soundData, getNote('E4'), 0.5);
-generateSound(soundData, getNote('C4'), 0.5);
-generatePause(soundData, 0.5);
-generateSound(soundData, getNote('C4'), 1);
-generateSound(soundData, getNote('C#4'), 1);
-generatePause(soundData, 0.5);
-generateSound(soundData, getNote('C#4'), 0.5);
-generateSound(soundData, getNote('F4'), 0.5);
-generateSound(soundData, getNote('G#4'), 0.5);
-generateSound(soundData, getNote('F4'), 0.5);
-generateSound(soundData, getNote('C#4'), 0.5);
-*/
+    let duration = 0.25;
+    
+    generateSound(soundData, note5, duration);
+    generateSound(soundData, note3, duration);
+    generateSound(soundData, note4, duration);
+    generateSound(soundData, note2, duration);
+    generateSound(soundData, note3, duration);
+    generateSound(soundData, note1, duration);
+    generateSound(soundData, note2, duration);
+    generateSound(soundData, note0, duration);
+    generateSound(soundData, note1, duration);
+    generatePause(soundData, duration);
 
-/* Music 2
-generateSound(soundData, A4, 1);
-generatePause(soundData, 1);
-generateSound(soundData, A4, 1);
-generateSound(soundData, moveNSemitones(7, A4), 1);
-generateSound(soundData, A4, 1);
-*/
+    if (shouldModulate) {
+        generateSound(soundData, note5, duration);
+        generatePause(soundData, duration);
+        generateSound(soundData, getNote(getPreviousNote(note5Name)), duration * 3);
+        generatePause(soundData, duration);
+    }
+}
 
-/* Music 1
-generateSound(soundData, oneSemitoneHigher(A4), 1);
-generatePause(soundData, 1);
-generateSound(soundData, oneSemitoneHigher(oneSemitoneHigher(oneSemitoneHigher(A4))), 1);
-*/
-//generateSound(soundData, A4, 1);
-//generateSound(soundData, A2, 1);
-
-/* NEEDED TO GENERATE ANYTHING
-dataSubChunkStruct.get('data').set(soundData);
-dataSubChunkStruct.get('size').set(soundData.length * 2);
-
-const totalSize = dataSubChunkStruct.computeBufferSize() + riffChunkStruct.computeBufferSize() + formatChunkStruct.computeBufferSize();
-
-const fileStruct = CONSTRUCT.Struct('waveFile')
-    .field('riffChunk', riffChunkStruct)
-    .field('formatChunkStruct', formatChunkStruct)
-    .field('dataSubChunkStruct', dataSubChunkStruct);
-
-FS.writeFileSync(PATH.join(__dirname, './new.wav'), fileStruct.toBuffer());
-*/
-
-let generators = [warmup1Generator, warmup2Generator, warmup3Generator, warmup4Generator];
+let generators = [
+    { generator: warmup1Generator, ascending: true },
+    { generator: warmup2Generator, ascending: true },
+    { generator: warmup3Generator, ascending: true },
+    { generator: warmup4Generator, ascending: true },
+    { generator: warmup5Generator, ascending: false },
+];
 
 function generateFullWarmup(params) {
     /* Params example:
@@ -406,7 +433,7 @@ function generateFullWarmup(params) {
             console.log(`Invalid generator! No predefined exercise with ID ${exercise.exerciseId}! Aborting...`);
             return { error: 'unknown_exercise' };
         }
-        generateWarmup(generators[exercise.exerciseId], initialNote, range);
+        generateWarmup(generators[exercise.exerciseId].generator, initialNote, range, generators[exercise.exerciseId].ascending);
         // TODO: Sound data is global, I do not need to send as parameter...
         generatePause(soundData, 2);
     }

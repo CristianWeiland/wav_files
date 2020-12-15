@@ -25,6 +25,7 @@ export class ExerciseEditorComponent implements OnInit {
   predefinedExercises: any[];
   loadingPredefinedExercises: boolean = true;
   fetchPredefinedExercisesError: string = null;
+  savingExercise: boolean = false;
 
   ngOnInit(): void {
     this.generateExerciseDefaultValues();
@@ -96,6 +97,9 @@ export class ExerciseEditorComponent implements OnInit {
       this._snackBar.open('Invalid predefined exercise.', '', { duration: 5000 });
       return;
     }
+    if (this.savingExercise) return;
+
+    this.savingExercise = true;
 
     let parsedExercise = {
       ...exercise,
@@ -105,6 +109,7 @@ export class ExerciseEditorComponent implements OnInit {
 
     this.http.post(`${url}/exercises/save`, { params: parsedExercise })
       .subscribe((response: any) => {
+        this.savingExercise = false;
         this._snackBar.open('Exercise saved succesfully', 'Awesome!', { duration: 5000 });
 
         this.reloadWarmup.emit();
@@ -112,6 +117,7 @@ export class ExerciseEditorComponent implements OnInit {
       }, err => {
         console.log(err);
 
+        this.savingExercise = false;
         this._snackBar.open('Unable to save exercise.', '', { duration: 5000 });
       });
   }

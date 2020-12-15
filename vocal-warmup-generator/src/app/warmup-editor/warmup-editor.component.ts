@@ -27,20 +27,23 @@ export class WarmupEditorComponent implements OnInit {
   warmup = null;
   warmupName: string = '';
 
+  savingWarmup: boolean = false;
+
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      let idParam = params.get('warmupId');
+      const idParam = params.get('warmupId');
 
       this.warmupId = idParam === null ? null : parseInt(idParam);
     });
   }
 
   saveWarmup() {
-    // TODO: Prevent double call until I have a response!
-    if (!this.warmupName) {
+    if (!this.warmupName || this.savingWarmup) {
       this._snackBar.open('Warmup name can not be blank!', 'Ok!', { duration: 5000 });
       return;
     }
+
+    this.savingWarmup = true;
 
     let parsedWarmup = this.exerciseList.getFullWarmup();
     parsedWarmup.name = this.warmupName;
@@ -48,9 +51,11 @@ export class WarmupEditorComponent implements OnInit {
 
     this.http.post(`${url}/warmup/save`, { params: parsedWarmup })
       .subscribe((response: any) => {
+        this.savingWarmup = false;
         this._snackBar.open('Warmup saved succesfully', 'Awesome!', { duration: 5000 });
       }, err => {
         console.log(err);
+        this.savingWarmup = false;
         this._snackBar.open('Unable to save warmup.', '', { duration: 5000 });
       });
   }

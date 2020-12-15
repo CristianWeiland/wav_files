@@ -5,7 +5,6 @@ let conn = require('../db/db');
 let { requireLogin } = require('../auth/auth');
 
 function getWarmupQuery(userId, id) {
-  // TODO: Filter by user ID
   let query = `SELECT
     W.id as id,
     W.name as name,
@@ -100,7 +99,7 @@ router.get('/warmup', requireLogin, function(req, res, next) {
         res.status(500).send({ message: 'Error fetching warmups list' });
       }
 
-      if (results) {
+      if (results && results.length) {
         res.status(200).send({ warmup: rawRowToWarmup(results) });
       } else {
         res.status(404).send({ message: 'Error warmup not found' });
@@ -130,6 +129,7 @@ router.post('/save', requireLogin, function(req, res, next) {
     // TODO: Should I save exercises as well? Most likely yes...
 
     conn.query(query, (err, results, fields) => {
+      console.log(results);
       if (!err) {
         res.status(200).send();
       } else {

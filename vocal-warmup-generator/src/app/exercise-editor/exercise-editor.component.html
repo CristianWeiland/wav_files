@@ -59,6 +59,6 @@
   <div class="small-note form-group">* Note: Starting and End note defines each other maximum and minimum value in the slider</div>
 
   <div>
-    <button mat-raised-button color="primary" (click)="saveExercise(exercise)">Save exercise</button>
+    <button mat-raised-button color="primary" (click)="saveExercise(exercise)" [disabled]="savingExercise">Save exercise</button>
   </div>
 </div>

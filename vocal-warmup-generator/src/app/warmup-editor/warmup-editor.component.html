@@ -2,14 +2,19 @@
   <h1 class="warmup-editor-title">Warmup editor</h1>
   <div>
     <div [hidden]="currentlyEditting === 'exercise'" class="mat-elevation-z8" style="padding: 20px">
+      <div style="padding-bottom: 10px">
+        <button [routerLink]="['/warmups']" mat-raised-button color="primary">
+          <mat-icon>keyboard_return</mat-icon>
+        </button>
+        <div style="float: right">
+          <button mat-raised-button color="accent" (click)="saveWarmup()">Save warmup</button>
+        </div>
+      </div>
 
       <mat-form-field appearance="outline" class="line-input">
         <mat-label>Warmup name</mat-label>
         <input matInput placeholder="" [value]="warmupName" (change)="warmupName = $event.target.value">
       </mat-form-field>
-      <div style="inline-block; float: right">
-        <button mat-raised-button color="accent" (click)="saveWarmup()">Save warmup</button>
-      </div>
 
       <h2 class="warmup-editor-subtitle">Defined exercises</h2>
       <div class="left-panel">
@@ -25,6 +30,6 @@
       (back)="showList()" (reloadWarmup)="reloadWarmup()"></app-exercise-editor>
   </div>
   <div *ngIf="warmup" style="padding-top: 20px">
-    <button style="float: right" mat-raised-button color="accent" (click)="save()">Save warmup</button>
+    <button style="float: right" mat-raised-button color="accent" (click)="save()" [disabled]="savingWarmup">Save warmup</button>
   </div>
 </div>
