@@ -5,6 +5,7 @@ CREATE TABLE exercises (
     name text,
     range_begin int,
     range_end int,
+    speed ENUM('slow', 'normal', 'fast') NOT NULL DEFAULT 'normal',
     created_at datetime,
     deleted_at datetime,
     updated_at datetime,

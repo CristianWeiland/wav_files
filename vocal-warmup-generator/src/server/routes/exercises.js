@@ -51,9 +51,17 @@ router.delete('/delete', requireLogin, function(req, res, next) {
     let query;
     if (id === undefined) {
       res.status(500).send({ message: 'Provide an ID to be deleted.' });
+      return;
     } else {
-      query = `UPDATE exercises SET deleted_at = now() WHERE id = ${id};`;
+      query = `
+        UPDATE exercises e
+        JOIN warmups w ON e.warmup_id = w.id
+        SET e.deleted_at = now()
+        WHERE w.user_id = ${req.session.userId} AND e.id = ${id};
+      `;
     }
+
+    console.log(query);
 
     conn.query(query, (err, results, fields) => {
       if (!err) {

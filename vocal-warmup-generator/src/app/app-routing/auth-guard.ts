@@ -8,7 +8,7 @@ export class AuthGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     const isLogged = localStorage.getItem('logged');
     // TODO: This is not working for expired tokens!
-    console.log('storage is logged ', isLogged);
+
     if (isLogged === 'true') {
         return true;
     }

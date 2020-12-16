@@ -36,6 +36,10 @@ import { WarmupListComponent } from './warmup-list/warmup-list.component';
 import { ToolTipRendererDirective } from './app-directives/dynamic-tooltip-renderer.directive';
 import { ExerciseEditorComponent } from './exercise-editor/exercise-editor.component';
 
+// Interceptables
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { UnauthorizedInterceptor } from './http/unauthorizedInterceptor';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -71,7 +75,13 @@ import { ExerciseEditorComponent } from './exercise-editor/exercise-editor.compo
     MatTableModule,
     MatTooltipModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: UnauthorizedInterceptor,
+      multi: true,
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

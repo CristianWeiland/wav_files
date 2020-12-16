@@ -195,11 +195,11 @@ function getPreviousNote(note) {
     if (note[0] === 'C' && note[1] !== '#') return `B${parseInt(note[1])-1}`;
 }
 
-function generateWarmup(warmupCoreGenerator, firstNote, repetitions, ascending) {
+function generateWarmup(warmupCoreGenerator, firstNote, repetitions, ascending, speed) {
     if (ascending) {
         let initialNote = firstNote;
         for (let i = 0; i < repetitions; ++i) {
-            warmupCoreGenerator(initialNote, i != repetitions - 1);
+            warmupCoreGenerator(initialNote, i != repetitions - 1, speed);
             initialNote = getNextNote(initialNote);
         }
     } else {
@@ -210,39 +210,47 @@ function generateWarmup(warmupCoreGenerator, firstNote, repetitions, ascending) 
         }
         
         for (let i = 0; i < repetitions; ++i) {
-            warmupCoreGenerator(initialNote, i != repetitions - 1);
+            warmupCoreGenerator(initialNote, i != repetitions - 1, speed);
             initialNote = getPreviousNote(initialNote);
         }
     }
 }
 
 //Bocca chiusa
-function warmup1Generator(firstNote, shouldModulate) {
+function warmup1Generator(firstNote, shouldModulate, speed) {
     let note1 = getNote(firstNote);
     let note2Name = getNextNote(getNextNote(firstNote));
     let note2 = getNote(note2Name);
     let note3Name = getNextNote(getNextNote(note2Name));
     let note3 = getNote(note3Name);
-    generateSound(soundData, note1, 0.5);
-    generateSound(soundData, note2, 0.5);
-    generateSound(soundData, note1, 0.5);
-    generateSound(soundData, note2, 0.5);
-    generateSound(soundData, note3, 0.5);
-    generateSound(soundData, note2, 0.5);
-    generateSound(soundData, note3, 0.5);
-    generateSound(soundData, note2, 0.5);
-    generateSound(soundData, note1, 0.5);
+
+    let duration = 0.5;
+    if (speed === 'slow') {
+        duration = 0.4;
+    } else if (speed === 'fast') {
+        duration = 0.6;
+    }
+
+    generateSound(soundData, note1, duration);
+    generateSound(soundData, note2, duration);
+    generateSound(soundData, note1, duration);
+    generateSound(soundData, note2, duration);
+    generateSound(soundData, note3, duration);
+    generateSound(soundData, note2, duration);
+    generateSound(soundData, note3, duration);
+    generateSound(soundData, note2, duration);
+    generateSound(soundData, note1, duration);
 
     if (shouldModulate) {
-        generatePause(soundData, 0.5);
-        generateSound(soundData, note1, 1);
-        generateSound(soundData, getNote(getNextNote(firstNote)), 1);
-        generatePause(soundData, 1);
+        generatePause(soundData, duration);
+        generateSound(soundData, note1, duration * 2);
+        generateSound(soundData, getNote(getNextNote(firstNote)), duration * 2);
+        generatePause(soundData, duration * 2);
     }
 }
 
 // Vroli vroli vroli vroli brin bréin brin bréin brin
-function warmup2Generator(firstNote, shouldModulate) {
+function warmup2Generator(firstNote, shouldModulate, speed) {
     let note1 = getNote(firstNote);
     let note2Name = getNextNote(getNextNote(firstNote));
     let note2 = getNote(note2Name);
@@ -252,33 +260,41 @@ function warmup2Generator(firstNote, shouldModulate) {
     let note4 = getNote(note4Name);
     let note5Name = getNextNote(getNextNote(note4Name));
     let note5 = getNote(note5Name);
+
+    let duration = 0.25;
+    if (speed === 'slow') {
+        duration = 0.2;
+    } else if (speed === 'fast') {
+        duration = 0.3;
+    }
+
     // vroli
-    generateSound(soundData, note1, 0.25);
-    generateSound(soundData, note2, 0.25);
-    generateSound(soundData, note3, 0.25);
-    generateSound(soundData, note4, 0.25);
-    generateSound(soundData, note5, 0.25);
-    generateSound(soundData, note4, 0.25);
-    generateSound(soundData, note3, 0.25);
-    generateSound(soundData, note2, 0.25);
+    generateSound(soundData, note1, duration);
+    generateSound(soundData, note2, duration);
+    generateSound(soundData, note3, duration);
+    generateSound(soundData, note4, duration);
+    generateSound(soundData, note5, duration);
+    generateSound(soundData, note4, duration);
+    generateSound(soundData, note3, duration);
+    generateSound(soundData, note2, duration);
 
     // brin bréin
-    generateSound(soundData, note1, 0.5);
-    generateSound(soundData, note3, 0.5);
-    generateSound(soundData, note5, 0.5);
-    generateSound(soundData, note3, 0.5);
-    generateSound(soundData, note1, 0.25);
+    generateSound(soundData, note1, duration * 2);
+    generateSound(soundData, note3, duration * 2);
+    generateSound(soundData, note5, duration * 2);
+    generateSound(soundData, note3, duration * 2);
+    generateSound(soundData, note1, duration);
 
     if (shouldModulate) {
-        generatePause(soundData, 0.25);
-        generateSound(soundData, note1, 0.5);
-        generateSound(soundData, getNote(getNextNote(firstNote)), 0.5);
-        generatePause(soundData, 0.5);
+        generatePause(soundData, duration);
+        generateSound(soundData, note1, duration * 2);
+        generateSound(soundData, getNote(getNextNote(firstNote)), duration * 2);
+        generatePause(soundData, duration * 2);
     }
 }
 
 // o - i - a
-function warmup3Generator(firstNote, shouldModulate) {
+function warmup3Generator(firstNote, shouldModulate, speed) {
     let note1 = getNote(firstNote);
     let note2Name = getNextNote(getNextNote(firstNote));
     let note2 = getNote(note2Name);
@@ -290,6 +306,12 @@ function warmup3Generator(firstNote, shouldModulate) {
     let note5 = getNote(note5Name);
 
     let duration = 0.15;
+    if (speed === 'slow') {
+        duration = 0.12;
+    } else if (speed === 'fast') {
+        duration = 0.18;
+    }
+
     for (let i = 0; i < 3; ++i) {
         generateSound(soundData, note1, duration);
         generatePause(soundData, duration);
@@ -313,13 +335,13 @@ function warmup3Generator(firstNote, shouldModulate) {
     if (shouldModulate) {
         generatePause(soundData, duration);
         generateSound(soundData, note1, 2 * duration);
-        generateSound(soundData, getNote(getNextNote(firstNote)), 0.45);
+        generateSound(soundData, getNote(getNextNote(firstNote)), 3 * duration);
         generatePause(soundData, duration);
     }
 }
 
 // mei mai mei
-function warmup4Generator(firstNote, shouldModulate) {
+function warmup4Generator(firstNote, shouldModulate, speed) {
     let note1 = getNote(firstNote);
     let note2Name = getNextNote(getNextNote(getNextNote(getNextNote(firstNote))));
     let note2 = getNote(note2Name);
@@ -327,6 +349,12 @@ function warmup4Generator(firstNote, shouldModulate) {
     let note3 = getNote(note3Name);
 
     let duration = 0.2;
+    if (speed === 'slow') {
+        duration = 0.15;
+    } else if (speed === 'fast') {
+        duration = 0.25;
+    }
+
     for (let i = 0; i < 2; ++i) {
         generateSound(soundData, note1, duration);
         generatePause(soundData, duration / 3);
@@ -349,7 +377,7 @@ function warmup4Generator(firstNote, shouldModulate) {
 }
 
 // ziu ziu ziu ziu zi
-function warmup5Generator(firstNote, shouldModulate) {
+function warmup5Generator(firstNote, shouldModulate, speed) {
     let note0 = getNote(getPreviousNote(firstNote));
     let note1 = getNote(firstNote);
     let note2Name = getNextNote(getNextNote(firstNote));
@@ -362,6 +390,11 @@ function warmup5Generator(firstNote, shouldModulate) {
     let note5 = getNote(note5Name);
 
     let duration = 0.25;
+    if (speed === 'slow') {
+        duration = 0.2;
+    } else if (speed === 'fast') {
+        duration = 0.3;
+    }
     
     generateSound(soundData, note5, duration);
     generateSound(soundData, note3, duration);
@@ -433,7 +466,13 @@ function generateFullWarmup(params) {
             console.log(`Invalid generator! No predefined exercise with ID ${exercise.exerciseId}! Aborting...`);
             return { error: 'unknown_exercise' };
         }
-        generateWarmup(generators[exercise.exerciseId].generator, initialNote, range, generators[exercise.exerciseId].ascending);
+
+        let speed = 'normal';
+        if (exercise.speed && exercise.speed === 'slow' || exercise.speed === 'fast') {
+            speed = exercise.speed;
+        }
+
+        generateWarmup(generators[exercise.exerciseId].generator, initialNote, range, generators[exercise.exerciseId].ascending, speed);
         // TODO: Sound data is global, I do not need to send as parameter...
         generatePause(soundData, 2);
     }

@@ -123,7 +123,7 @@ router.post('/save', requireLogin, function(req, res, next) {
     if (id === undefined) {
       query = `INSERT INTO warmups (name, user_id) VALUES (${name}, ${req.session.userId});`;
     } else {
-      query = `UPDATE warmups SET name = ${name} WHERE id = ${id};`;
+      query = `UPDATE warmups SET name = ${name} WHERE id = ${id} AND user_id = ${req.session.userId};`;
     }
 
     // TODO: Should I save exercises as well? Most likely yes...
@@ -140,6 +140,33 @@ router.post('/save', requireLogin, function(req, res, next) {
   } catch(err) {
     console.log('Error saving warmup!', err);
     res.status(500).send({ message: 'Error saving warmup' });
+  }
+});
+
+router.delete('/delete', requireLogin, function(req, res, next) {
+  try {
+    let id = req.query.id;
+    let query;
+    if (id === undefined) {
+      res.status(500).send({ message: 'Provide an ID to be deleted.' });
+      return;
+    } else {
+      query = `UPDATE warmups SET deleted_at = now() WHERE id = ${id} AND user_id = ${req.session.userId};`;
+    }
+
+    console.log(query);
+
+    conn.query(query, (err, results, fields) => {
+      if (!err) {
+        res.status(200).send({ message: 'Warmup deleted successfully!' });
+      } else {
+        console.log(err);
+        res.status(500).send({ message: 'Error saving warmup.' });
+      }
+    });
+  } catch (err) {
+    console.log('Error saving warmup!', err);
+    res.status(500).send({ message: 'Error saving warmup.' });
   }
 });
 
