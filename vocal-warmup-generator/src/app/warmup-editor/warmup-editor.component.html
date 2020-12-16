@@ -21,7 +21,9 @@
         <app-exercise-list *ngIf="warmupId !== null" mode="edit" [warmupId]="warmupId"
           (requestEdit)="editExercise($event)" (warmupLoaded)="fetchWarmupName($event)"></app-exercise-list>
         <div style="padding-top: 20px" align="right">
-          <button mat-raised-button color="primary" (click)="newExercise()">Create new exercise</button>
+          <span matTooltip="Save your warmup before creating exercises!" [matTooltipDisabled]="warmupId !== -1 || created" style="display: inline-block">
+            <button mat-raised-button color="primary" (click)="newExercise()" [disabled]="warmupId === -1 && !created">Create new exercise</button>
+          </span>
         </div>
       </div>
     </div>

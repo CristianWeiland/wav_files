@@ -50,12 +50,7 @@ export class WarmupListComponent implements OnInit {
 
   downloadRequest(filename) {
     // download file
-    const httpOptions = {
-      responseType: 'blob' as 'json',
-      //headers: new HttpHeaders({
-      //  'Authorization': this.authKey,
-      //}),
-    };
+    const httpOptions = { responseType: 'blob' as 'json' };
 
     this.http.get(`${url}/audio/${filename}`, httpOptions)
       .subscribe((data: any) => {

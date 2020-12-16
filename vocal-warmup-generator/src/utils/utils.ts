@@ -4,7 +4,8 @@ function removeFilenameCollisionAvoider(filename) {
 
   if (filename.match(regex)) {
     let matches = regex.exec(filename);
-    filename = `${matches[0]}${matches[1]}`;
+    // Exec's first element on the array is the full string.
+    filename = `${matches[1]}${matches[3]}`;
   }
 
   return filename;
