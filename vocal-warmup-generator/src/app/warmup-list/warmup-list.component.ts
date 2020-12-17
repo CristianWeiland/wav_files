@@ -123,4 +123,8 @@ export class WarmupListComponent implements OnInit {
       }
     }
   }
+
+  deleteWarmup(i: number) {
+
+  }
 }

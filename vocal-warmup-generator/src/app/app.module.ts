@@ -10,6 +10,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // Angular material
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -63,6 +64,7 @@ import { UnauthorizedInterceptor } from './http/unauthorizedInterceptor';
     // Material components
     DragDropModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatCardModule,
     MatDividerModule,
     MatIconModule,

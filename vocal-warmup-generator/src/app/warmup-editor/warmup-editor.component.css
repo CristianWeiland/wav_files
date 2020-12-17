@@ -1,12 +1,12 @@
 .content {
   width: 80%;
   margin-left: 10%;
+  padding-bottom: 50px; /* Ensure user can scroll down even when list is big */
 }
 
 .warmup-editor-title {
   font-size: 36px;
   font-weight: bold;
-  /*text-align: center;*/
   color: #555
 }
 

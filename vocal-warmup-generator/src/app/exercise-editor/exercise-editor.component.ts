@@ -42,7 +42,7 @@ export class ExerciseEditorComponent implements OnInit {
         this.predefinedExercises[0].id : null,
       customName: '',
       range: { begin: 10, end: 20 },
-      speed: 1,
+      speed: 'normal',
     };
   }
 
@@ -80,6 +80,7 @@ export class ExerciseEditorComponent implements OnInit {
       exerciseId: exercise.exerciseId,
       predefinedExerciseId: exercise.predefinedExerciseId,
       customName: exercise.name,
+      speed: exercise.speed,
       range: {
         begin: exercise.range.begin,
         end: exercise.range.end,
@@ -103,7 +104,7 @@ export class ExerciseEditorComponent implements OnInit {
 
     let parsedExercise = {
       ...exercise,
-      //id: this.exerciseId,
+      //speed: this.speed,
       warmupId: this.warmupId,
     };
 

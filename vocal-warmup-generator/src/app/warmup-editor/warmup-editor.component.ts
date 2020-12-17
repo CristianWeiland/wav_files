@@ -29,6 +29,7 @@ export class WarmupEditorComponent implements OnInit {
 
   savingWarmup: boolean = false;
   created: boolean = false;
+  createdId: number = -1;
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -50,10 +51,18 @@ export class WarmupEditorComponent implements OnInit {
     parsedWarmup.name = this.warmupName;
     parsedWarmup.id = this.warmupId;
 
+    if (this.created && this.createdId !== -1) {
+      // Just created a new warmup, we should now edit it:
+      parsedWarmup.id = this.createdId;
+    }
+
     this.http.post(`${url}/warmup/save`, { params: parsedWarmup })
       .subscribe((response: any) => {
         this.savingWarmup = false;
         this.created = true;
+        if (this.createdId === -1) {
+          this.createdId = response.id;
+        }
         this._snackBar.open('Warmup saved succesfully', 'Awesome!', { duration: 5000 });
       }, err => {
         console.log(err);

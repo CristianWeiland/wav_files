@@ -14,12 +14,13 @@ function getWarmupQuery(userId, id) {
     E.range_begin as range_begin,
     E.range_end as range_end,
     E.name as exercise_name,
+    E.speed as exercise_speed,
     PE.name as exercise_default_name
   FROM
     warmups W
-  JOIN
+  LEFT JOIN
     exercises E ON W.id = E.warmup_id
-  JOIN
+  LEFT JOIN
     predefined_exercises PE ON E.predefined_exercise_id = PE.id
   WHERE E.deleted_at IS NULL AND W.user_id = ${userId}`;
 
@@ -42,6 +43,7 @@ function rawRowToWarmup(rowArray) {
     return {
       range: { begin: row.range_begin, end: row.range_end },
       name: row.exercise_name,
+      speed: row.exercise_speed,
       exerciseId: row.exercise_id,
       predefinedExerciseId: row.predefined_exercise_id,
       defaultName: row.exercise_default_name,
@@ -120,18 +122,17 @@ router.post('/save', requireLogin, function(req, res, next) {
     // TODO: Validate if WarmupID and PredefinedExerciseID are valid!
     let query;
 
-    if (id === undefined) {
-      query = `INSERT INTO warmups (name, user_id) VALUES (${name}, ${req.session.userId});`;
+    if (id === undefined || id === -1) {
+      query = `INSERT INTO warmups (name, user_id, created_at) VALUES (${name}, ${req.session.userId}, now());`;
     } else {
-      query = `UPDATE warmups SET name = ${name} WHERE id = ${id} AND user_id = ${req.session.userId};`;
+      query = `UPDATE warmups SET name = ${name}, updated_at = now() WHERE id = ${id} AND user_id = ${req.session.userId};`;
     }
 
     // TODO: Should I save exercises as well? Most likely yes...
 
     conn.query(query, (err, results, fields) => {
-      console.log(results);
       if (!err) {
-        res.status(200).send();
+        res.status(200).send({ id: results.insertId });
       } else {
         console.log(err);
         res.status(500).send({ message: 'Error saving exercise.' });
@@ -153,8 +154,6 @@ router.delete('/delete', requireLogin, function(req, res, next) {
     } else {
       query = `UPDATE warmups SET deleted_at = now() WHERE id = ${id} AND user_id = ${req.session.userId};`;
     }
-
-    console.log(query);
 
     conn.query(query, (err, results, fields) => {
       if (!err) {

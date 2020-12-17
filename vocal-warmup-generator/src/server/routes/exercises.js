@@ -16,9 +16,9 @@ router.post('/save', requireLogin, function(req, res, next) {
 
       query = `
         INSERT INTO exercises
-          (warmup_id, predefined_exercise_id, name, range_begin, range_end)
+          (warmup_id, predefined_exercise_id, name, range_begin, range_end, speed)
         VALUES
-          (${exercise.warmupId}, ${exercise.predefinedExerciseId}, ${customName}, ${exercise.range.begin}, ${exercise.range.end});
+          (${exercise.warmupId}, ${exercise.predefinedExerciseId}, ${customName}, ${exercise.range.begin}, ${exercise.range.end}, "${exercise.speed || 'normal'}");
       `;
     } else {
       query = `
@@ -27,7 +27,8 @@ router.post('/save', requireLogin, function(req, res, next) {
           predefined_exercise_id = ${exercise.predefinedExerciseId},
           name = ${customName},
           range_begin = ${exercise.range.begin},
-          range_end = ${exercise.range.end}
+          range_end = ${exercise.range.end},
+          speed = "${exercise.speed}"
         WHERE id = ${id};`;
     }
 

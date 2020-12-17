@@ -7,7 +7,13 @@ const session = require('express-session');
 //let sessions = require('client-sessions'); TODO: Remove client-sessions component!
 const { v4: uuidv4 } = require('uuid');
 
+let MySQLStore = require('express-mysql-session')(session);
+
+let dbOpts = require('./database.json');
 let secret = require('./secret');
+
+dbOpts.insecureAuth = true; // Workaround for mySql version incompatibilities
+let sessionStore = new MySQLStore(dbOpts);
 
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
@@ -33,6 +39,7 @@ app.use(session({
   },
   secret,
   resave: false,
+  store: sessionStore,
   saveUninitialized: true,
   cookie: { secure: false, httpOnly: false, sameSite: 'strict' }
 }));

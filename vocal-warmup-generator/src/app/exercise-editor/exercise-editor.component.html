@@ -58,6 +58,15 @@
 
   <div class="small-note form-group">* Note: Starting and End note defines each other maximum and minimum value in the slider</div>
 
+  <p>
+    Speed:
+    <mat-button-toggle-group name="speed" aria-label="Speed" [(ngModel)]="exercise.speed">
+      <mat-button-toggle value="slow">Slow</mat-button-toggle>
+      <mat-button-toggle value="normal" checked>Normal</mat-button-toggle>
+      <mat-button-toggle value="fast">Fast</mat-button-toggle>
+    </mat-button-toggle-group>
+  </p>
+
   <div>
     <button mat-raised-button color="primary" (click)="saveExercise(exercise)" [disabled]="savingExercise">Save exercise</button>
   </div>
