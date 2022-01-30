@@ -14,7 +14,7 @@ export class HomeComponent {
 
   constructor(private router: Router, private http: HttpClient, private _snackBar: MatSnackBar) {}
 
-  title = 'Vocal warmup generator';
+  title = 'Vocal Warmup Generator';
 
   login = {
     email: 'john@bravo.com',

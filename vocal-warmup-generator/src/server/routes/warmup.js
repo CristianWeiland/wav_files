@@ -22,7 +22,7 @@ function getWarmupQuery(userId, id) {
     exercises E ON W.id = E.warmup_id
   LEFT JOIN
     predefined_exercises PE ON E.predefined_exercise_id = PE.id
-  WHERE E.deleted_at IS NULL AND W.user_id = ${userId}`;
+  WHERE W.deleted_at IS NULL AND E.deleted_at IS NULL AND W.user_id = ${userId}`;
 
   if (id) {
     query += ` AND W.id = ${id}`;
@@ -49,6 +49,8 @@ function rawRowToWarmup(rowArray) {
       defaultName: row.exercise_default_name,
     };
   });
+
+  warmup.exercises = warmup.exercises.filter(warmup => warmup.predefinedExerciseId !== null);
 
   return warmup;
 }

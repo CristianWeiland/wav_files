@@ -415,12 +415,219 @@ function warmup5Generator(firstNote, shouldModulate, speed) {
     }
 }
 
+// vamos cantar
+function warmup6Generator(firstNote, shouldModulate, speed) {
+    let fundamental = getNote(firstNote);
+    let secondName = getNextNote(getNextNote(firstNote));
+    let second = getNote(secondName);
+    let thirdName = getNextNote(getNextNote(secondName));
+    let third = getNote(thirdName);
+    let fourthName = getNextNote(thirdName);
+    let fourth = getNote(fourthName);
+    let fifthName = getNextNote(getNextNote(fourthName));
+    let fifth = getNote(fifthName);
+    let sixthName = getNextNote(getNextNote(fifthName));
+    let sixth = getNote(sixthName);
+    let seventhName = getNextNote(getNextNote(sixthName));
+    let seventh = getNote(seventhName);
+    let octaveName = getNextNote(seventhName);
+    let octave = getNote(octaveName);
+    let ninthName = getNextNote(getNextNote(octaveName));
+    let ninth = getNote(ninthName);
+
+    let duration = 0.4;
+    if (speed === 'slow') {
+        duration = 0.35;
+    } else if (speed === 'fast') {
+        duration = 0.45;
+    }
+
+    generateSound(soundData, fundamental, duration);
+    generateSound(soundData, third, duration);
+    generateSound(soundData, fifth, duration);
+    generateSound(soundData, octave, duration * 2.5);
+    generateSound(soundData, seventh, duration / 2);
+    generateSound(soundData, octave, duration / 2);
+    generateSound(soundData, ninth, duration / 2);
+    generateSound(soundData, octave, duration / 2);
+    generateSound(soundData, seventh, duration / 2);
+    generateSound(soundData, octave, duration / 2);
+    generateSound(soundData, ninth, duration / 2);
+    generateSound(soundData, octave, duration / 2);
+    generateSound(soundData, seventh, duration / 2);
+    generateSound(soundData, octave, duration / 2);
+    generateSound(soundData, ninth, duration / 2);
+    generateSound(soundData, octave, duration / 2);
+    generateSound(soundData, seventh, duration / 2);
+    generateSound(soundData, sixth, duration / 2);
+    generateSound(soundData, fifth, duration / 2);
+    generateSound(soundData, fourth, duration / 2);
+    generateSound(soundData, third, duration / 2);
+    generateSound(soundData, second, duration / 2);
+    generateSound(soundData, fundamental, duration * 3.5);
+    generatePause(soundData, duration);
+
+    if (shouldModulate) {
+        generateSound(soundData, fundamental, duration);
+        generatePause(soundData, duration);
+        generateSound(soundData, getNote(getNextNote(firstNote)), duration * 3);
+        generatePause(soundData, duration);
+    }
+}
+
+// un jardin di rose
+function warmup7Generator(firstNote, shouldModulate, speed) {
+    let fundamental = getNote(firstNote);
+    let secondName = getNextNote(getNextNote(firstNote));
+    let second = getNote(secondName);
+    let thirdName = getNextNote(getNextNote(secondName));
+    let third = getNote(thirdName);
+    let fourthName = getNextNote(thirdName);
+    let fourth = getNote(fourthName);
+    let fifthName = getNextNote(getNextNote(fourthName));
+    let fifth = getNote(fifthName);
+    let sixthName = getNextNote(getNextNote(fifthName));
+    let seventhName = getNextNote(getNextNote(sixthName));
+    let seventh = getNote(seventhName);
+    let octaveName = getNextNote(seventhName);
+    let octave = getNote(octaveName);
+
+    let duration = 0.5;
+    if (speed === 'slow') {
+        duration = 0.4;
+    } else if (speed === 'fast') {
+        duration = 0.6;
+    }
+
+    generateSound(soundData, fundamental, duration);
+    generateSound(soundData, third, duration);
+    generateSound(soundData, fifth, duration);
+    generateSound(soundData, octave, duration);
+    generateSound(soundData, seventh, duration);
+    generateSound(soundData, fifth, duration);
+    generateSound(soundData, fourth, duration);
+    generateSound(soundData, second, duration);
+    generateSound(soundData, fundamental, duration * 0.8);
+    generatePause(soundData, duration * 0.2);
+
+    if (shouldModulate) {
+        generateSound(soundData, fundamental, duration * 0.8);
+        generatePause(soundData, duration * 0.2);
+        generateSound(soundData, getNote(getPreviousNote(firstNote)), duration * 1.8);
+        generatePause(soundData, duration * 0.2);
+    }
+}
+
+// glissando
+function warmup8Generator(firstNote, shouldModulate, speed) {
+    let fundamental = getNote(firstNote);
+    let octaveName = firstNote;
+    for (let i = 0; i < 12; ++i) {
+        octaveName = getNextNote(octaveName);
+    }
+    let octave = getNote(octaveName);
+
+    let duration = 1;
+    if (speed === 'slow') {
+        duration = 1.2;
+    } else if (speed === 'fast') {
+        duration = 0.8;
+    }
+
+    generateSound(soundData, fundamental, duration);
+    generateSound(soundData, octave, duration);
+    generateSound(soundData, fundamental, duration);
+    generatePause(soundData, duration / 4);
+
+    if (shouldModulate) {
+        generateSound(soundData, fundamental, duration / 4);
+        generatePause(soundData, duration / 4);
+        generateSound(soundData, getNote(getNextNote(firstNote)), duration);
+        generatePause(soundData, duration / 4);
+    }
+}
+
+// uu - uu (Ascending)
+function warmup9Generator(firstNote, shouldModulate, speed) {
+    let fundamental = getNote(firstNote);
+    let minorSecondName = getNextNote(firstNote);
+    let minorSecond = getNote(minorSecondName);
+    let majorSecondName =  getNextNote(minorSecondName);
+    let majorSecond = getNote(majorSecondName);
+    let minorThirdName =  getNextNote(majorSecondName);
+    let minorThird = getNote(minorThirdName);
+
+    let duration = 0.4;
+    if (speed === 'slow') {
+        duration = 0.45;
+    } else if (speed === 'fast') {
+        duration = 0.35;
+    }
+
+    for (let i = 0; i < 2; ++i)
+    {
+        generatePause(soundData, duration / 2);
+        generateSound(soundData, fundamental, duration / 2);
+        generateSound(soundData, minorSecond, duration / 2);
+        generatePause(soundData, duration / 2);
+        generateSound(soundData, majorSecond, duration / 2);
+        generateSound(soundData, minorThird, (i == 0) ? duration * 2 : duration);
+        generatePause(soundData, (i == 0) ? duration : duration / 4);
+    }
+
+    if (shouldModulate) {
+        generateSound(soundData, fundamental, duration);
+        generatePause(soundData, duration / 3);
+        generateSound(soundData, getNote(getNextNote(firstNote)), duration / 2);
+    }
+}
+
+// uu - uu (Descending)
+function warmup10Generator(firstNote, shouldModulate, speed) {
+    let fundamental = getNote(firstNote);
+    let minorSecondName = getNextNote(firstNote);
+    let minorSecond = getNote(minorSecondName);
+    let majorSecondName =  getNextNote(minorSecondName);
+    let majorSecond = getNote(majorSecondName);
+    let minorThirdName =  getNextNote(majorSecondName);
+    let minorThird = getNote(minorThirdName);
+
+    let duration = 0.4;
+    if (speed === 'slow') {
+        duration = 0.45;
+    } else if (speed === 'fast') {
+        duration = 0.35;
+    }
+
+    for (let i = 0; i < 2; ++i)
+    {
+        generatePause(soundData, duration / 2);
+        generateSound(soundData, minorThird, duration / 2);
+        generateSound(soundData, majorSecond, duration / 2);
+        generatePause(soundData, duration / 2);
+        generateSound(soundData, minorSecond, duration / 2);
+        generateSound(soundData, fundamental, (i == 0) ? duration * 2 : duration);
+        generatePause(soundData, (i == 0) ? duration : duration / 4);
+    }
+
+    if (shouldModulate) {
+        generateSound(soundData, fundamental, duration);
+        generatePause(soundData, duration / 3);
+        generateSound(soundData, getNote(getPreviousNote(firstNote)), duration / 2);
+    }
+}
+
 let generators = [
     { generator: warmup1Generator, ascending: true },
     { generator: warmup2Generator, ascending: true },
     { generator: warmup3Generator, ascending: true },
     { generator: warmup4Generator, ascending: true },
     { generator: warmup5Generator, ascending: false },
+    { generator: warmup6Generator, ascending: true },
+    { generator: warmup7Generator, ascending: false },
+    { generator: warmup8Generator, ascending: true },
+    { generator: warmup9Generator, ascending: true },
+    { generator: warmup10Generator, ascending: false },
 ];
 
 function generateFullWarmup(params) {
@@ -457,12 +664,12 @@ function generateFullWarmup(params) {
             return { error: 'invalid_range' };
         }
 
-        let range = exercise.range.end - exercise.range.begin;
+        let range = exercise.range.end - exercise.range.begin + 1;
         let initialNote = 'C3';
         for (let j = 0; j < exercise.range.begin; ++j) {
             initialNote = getNextNote(initialNote);
         }
-        if (!generators[exercise.exerciseId]) {
+        if (!generators[exercise.exerciseId - 1]) {
             console.log(`Invalid generator! No predefined exercise with ID ${exercise.exerciseId}! Aborting...`);
             return { error: 'unknown_exercise' };
         }
@@ -472,7 +679,7 @@ function generateFullWarmup(params) {
             speed = exercise.speed;
         }
 
-        generateWarmup(generators[exercise.exerciseId].generator, initialNote, range, generators[exercise.exerciseId].ascending, speed);
+        generateWarmup(generators[exercise.exerciseId - 1].generator, initialNote, range, generators[exercise.exerciseId - 1].ascending, speed);
         // TODO: Sound data is global, I do not need to send as parameter...
         generatePause(soundData, 2);
     }

@@ -1,7 +1,8 @@
 # First setup:
 
 - Install dependencies with `npm install`
-- Setup a MySQL database and configure it in a file `database.json` in the server directory, similar to `database.json.example`.
+- Setup a MySQL database and configure it in a file `src/server/database.json` in the server directory, similar to `database.json.example`.
+- Create a new secret file, stored in `src/server/secret.js`, similar to `secret.js.example`.
 
 # VocalWarmupGenerator - UI
 

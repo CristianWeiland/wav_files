@@ -65,7 +65,6 @@ export class ExerciseListComponent implements OnInit {
 
           response.warmup.exercises.forEach((exercise: ExerciseInterface) => {
             ELEMENT_DATA.push(exercise);
-            console.log(exercise);
           });
 
           this.warmupLoaded.emit({ name: this.warmup.name });

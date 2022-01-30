@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTable } from '@angular/material/table';
 import { HttpClient } from '@angular/common/http';
 
 import { url } from '../../utils/baseUrl';
@@ -33,6 +34,8 @@ export class WarmupListComponent implements OnInit {
   expandedElement: null;
   audio: HTMLAudioElement;
   generating: boolean = false;
+
+  @ViewChild(MatTable) table: MatTable<any>;
 
   ngOnInit(): void {
     this.fetchingWarmups = true;
@@ -125,6 +128,19 @@ export class WarmupListComponent implements OnInit {
   }
 
   deleteWarmup(i: number) {
+    this.http.delete(`${url}/warmup/delete`, { params: { id: i.toString() } })
+      .subscribe((response: any) => {
+        this._snackBar.open('Warmup deleted succesfully', 'Awesome!', { duration: 5000 });
 
+        let warmupListIndex = this.warmupList.findIndex(elem => elem.id === i);
+        this.warmupList.splice(warmupListIndex, 1);
+        this.table.renderRows();
+      }, err => {
+        console.log(err);
+
+        this._snackBar.open('Unable to delete warmup.', '', { duration: 5000 });
+      });
+
+    console.log(`Deleting ${i}`);
   }
 }
